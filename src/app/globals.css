@@ -120,3 +120,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Center toast text */
+[data-sonner-toast] {
+  text-align: center !important;
+  justify-content: center !important;
+  
+}
+
+[data-sonner-toast] [data-title],
+[data-sonner-toast] [data-description] {
+  text-align: center !important;
+  width: 100%;
+}

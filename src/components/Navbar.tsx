@@ -145,15 +145,21 @@ const MobileMenu = memo(({
                 </div>
 
                 {/* Logout */}
-                <button
-                    onClick={() => {
-                        onLogout();
-                        onClose();
-                    }}
-                    className="w-full text-left py-2 px-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
-                >
-                    Logout
-                </button>
+                {user ? (
+                    <button
+                        onClick={() => {
+                            onLogout();
+                            onClose();
+                        }}
+                        className="w-full text-left py-2 px-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
+                    >
+                        Logout
+                    </button>
+                ) : (
+                    <button className="w-full text-left p-2 text-green-600 hover:bg-green-50 rounded transition-colors font-medium">
+                        <Link href="/login">Login</Link>
+                    </button>
+                )}
             </div>
         </div>
     );
@@ -263,15 +269,19 @@ export default function Navigation() {
                                                 {/* User Links */}
                                                 <UserLinks />
 
-                                                
+                                                {user ? (
+                                                    <button
+                                                        onClick={handleLogout}
+                                                        className="w-full text-left p-2 text-red-600 hover:bg-red-50 rounded transition-colors font-medium"
+                                                    >
+                                                        Logout
+                                                    </button>
+                                                ) : (
+                                                    <button className="w-full text-left p-2 text-green-600 hover:bg-green-50 rounded transition-colors font-medium">
+                                                        <Link href="/login">Login</Link>
+                                                    </button>
+                                                )}
 
-                                                {/* Logout */}
-                                                <button
-                                                    onClick={handleLogout}
-                                                    className="w-full text-left p-2 text-red-600 hover:bg-red-50 rounded transition-colors font-medium"
-                                                >
-                                                    Logout
-                                                </button>
                                             </div>
                                         </NavigationMenuContent>
                                     </NavigationMenuItem>

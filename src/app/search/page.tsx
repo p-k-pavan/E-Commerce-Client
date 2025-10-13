@@ -15,7 +15,7 @@ const ProductCard = ({ product }: { product: any }) => (
   >
     <div className="aspect-w-1 aspect-h-1 w-full">
       <img
-        src={product.image || "/placeholder-product.jpg"}
+        src={product.image[0] || "/placeholder-product.jpg"}
         alt={product.name}
         className="w-full h-48 object-cover"
       />

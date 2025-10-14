@@ -54,15 +54,15 @@ export default function Home() {
 
             <div className="container mx-auto px-4 my-4 grid grid-cols-5 md:grid-cols-8 lg:grid-cols-10  gap-2">
                 {loading
-                    ? 
+                    ?
                     Array.from({ length: 10 }).map((_, index) => (
                         <div key={index} className="flex flex-col items-center space-y-2">
                             <Skeleton className="w-32 h-32 rounded-lg" />
                         </div>
                     ))
-                    : 
+                    :
                     category.map((cat: any) => (
-                        <Link key={cat._id} href={cat._id}>
+                        <Link key={cat._id} href={`/category/${cat._id}`}>
                             <div className="flex flex-col items-center cursor-pointer">
                                 <img
                                     src={cat.image || '/placeholder.png'}
@@ -73,13 +73,13 @@ export default function Home() {
                         </Link>
                     ))}
             </div>
-      {category.map((cat: any) => (
-        <CategoryWiseProductDisplay
-          key={cat._id}
-          id={cat._id}
-          name={cat.name}
-        />
-      ))}
+            {category.map((cat: any) => (
+                <CategoryWiseProductDisplay
+                    key={cat._id}
+                    id={cat._id}
+                    name={cat.name}
+                />
+            ))}
         </div>
     );
 }

@@ -7,6 +7,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import ProductCard, { Product } from "./ProductCard";
 import ProductSkeleton from "./ProductSkeleton";
+import Link from "next/link";
 
 interface SubCategory {
   _id: string;
@@ -49,7 +50,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
       if (response.data.success) {
         const subCats = response.data.data || [];
         setSubCategories(subCats);
-        
+
         // Auto-select first subcategory if available
         if (subCats.length > 0 && !selectedSubCategory) {
           setSelectedSubCategory(subCats[0]._id);
@@ -62,7 +63,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
         error?.response?.data?.message ||
         error?.message ||
         'Failed to fetch subcategories. Please try again.';
-      
+
       toast.error(errorMessage);
     } finally {
       setSubCategoriesLoading(false);
@@ -132,17 +133,15 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
   return (
     <div className="container mx-auto px-3 py-6">
       <div className="flex flex-row gap-4">
-        {/* Sidebar - Subcategories - Sticky on left side */}
-        <div className="w-1/3 md:w-1/4 lg:w-1/5">
-          <div className="sticky top-24 bg-white rounded-lg shadow-sm border border-gray-200 p-3">
-            <h3 className="font-semibold text-sm md:text-base mb-3 text-gray-800">
-              Categories
-            </h3>
-            
+        <div className="w-1/4 md:w-1/4 lg:w-1/5">
+          <div className="sticky top-24 bg-white rounded-lg shadow-sm border border-gray-200 p-3 max-h-[85vh] flex flex-col">
             {subCategoriesLoading ? (
-              <div className="space-y-3">
+              <div className="space-y-3 overflow-y-auto">
                 {Array.from({ length: 5 }).map((_, index) => (
-                  <div key={index} className="flex flex-col items-center space-y-2 md:flex-row md:space-y-0 md:space-x-2">
+                  <div
+                    key={index}
+                    className="flex flex-col items-center space-y-2 md:flex-row md:space-y-0 md:space-x-2"
+                  >
                     <div className="w-12 h-12 md:w-8 md:h-8 bg-gray-200 rounded animate-pulse"></div>
                     <div className="w-full md:flex-1">
                       <div className="h-3 bg-gray-200 rounded animate-pulse"></div>
@@ -158,32 +157,31 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
                 <p className="text-gray-500 text-xs">No categories</p>
               </div>
             ) : (
-              <div className="space-y-3  overflow-y-auto">
+              <div className="overflow-y-auto flex-1 space-y-2">
                 {subCategories.map((subCategory) => (
                   <button
                     key={subCategory._id}
                     onClick={() => handleSubCategorySelect(subCategory._id)}
-                    className={`w-full p-2 rounded transition-all duration-200 cursor-pointer flex flex-col items-center space-y-2 md:flex-row md:space-y-0 md:space-x-2 md:items-center group ${
-                      selectedSubCategory === subCategory._id
-                        ? 'bg-green-50 text-green-700 border border-green-200 font-medium'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900 border border-transparent'
-                    }`}
+                    className={`w-full p-2 rounded transition-all duration-200 cursor-pointer flex flex-col items-center md:flex-row md:space-y-0 md:space-x-2 md:items-center group ${selectedSubCategory === subCategory._id
+                      ? 'bg-green-50 text-green-700 border border-green-300 font-medium'
+                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900 border border-transparent'
+                      }`}
                   >
-                    {/* Subcategory Image - Larger on mobile, smaller on tablet+ */}
-                    <div className="flex-shrink-0 w-12 h-16 bg-gray-100 rounded overflow-hidden">
+                    {/* Subcategory Image */}
+                    <div className="flex-shrink-0 w-12 h-20 bg-gray-100 rounded overflow-hidden">
                       <img
                         src={subCategory.image || '/images/placeholder-subcategory.png'}
                         alt={subCategory.name}
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = '/images/placeholder-subcategory.png';
+                          (e.target as HTMLImageElement).src =
+                            '/images/placeholder-subcategory.png';
                         }}
                       />
                     </div>
-                    
-                    
+
                     <div className="flex-1 min-w-0 text-center md:text-left">
-                      <h4 className="font-medium text-xs md:text-sm truncate">
+                      <h4 className="font-medium text-xs md:text-sm line-clamp-2 break-words">
                         {subCategory.name}
                       </h4>
                     </div>
@@ -194,14 +192,14 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
           </div>
         </div>
 
+
         {/* Main Content - Products */}
         <div className="flex-1">
-          {/* Selected Subcategory Info */}
           {selectedSubCategory && (
             <div className="mb-4">
               <h2 className="text-lg md:text-xl font-semibold text-gray-800">
                 {
-                  subCategories.find(sub => sub._id === selectedSubCategory)?.name || 
+                  subCategories.find(sub => sub._id === selectedSubCategory)?.name ||
                   'Products'
                 }
               </h2>
@@ -211,7 +209,6 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
             </div>
           )}
 
-          {/* Products Grid */}
           {loading ? (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               <ProductSkeleton count={8} />
@@ -222,7 +219,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
                 <span className="text-lg">⚠️</span>
               </div>
               <p className="text-red-500 text-sm mb-3">{error}</p>
-              <button 
+              <button
                 onClick={fetchProducts}
                 className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-xs md:text-sm transition-colors"
               >
@@ -241,13 +238,15 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onAddToCart={handleAddToCart}
-                  className="w-full"
-                />
+              {products.map((product: any) => (
+                <Link href={`/product/${product._id}`}>
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onAddToCart={handleAddToCart}
+                    className="w-full"
+                  />
+                </Link>
               ))}
             </div>
           )}

@@ -131,12 +131,14 @@ function CategoryWiseProductDisplay({
                             {error}
                         </div>
                     ) : (
-                        data.map((product) => (
-                            <ProductCard
-                                key={product.id}
-                                product={product}
-                                onAddToCart={handleProductAddToCart}
-                            />
+                        data.map((product: any) => (
+                            <Link href={`/product/${product._id}`}>
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
+                                    onAddToCart={handleProductAddToCart}
+                                />
+                            </Link>
                         ))
                     )}
                 </div>

@@ -1,4 +1,5 @@
 "use client"
+import AddToCartButton from "@/components/AddToCart"
 import axios from "axios"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -119,7 +120,7 @@ export default function ProductDetail() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      {/* Breadcrumb */}
+
       <div className="text-sm text-muted-foreground mb-6">{data.name}</div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
@@ -143,11 +144,10 @@ export default function ProductDetail() {
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
-                  className={`aspect-square cursor-pointer overflow-hidden rounded-lg border-2 transition-all focus:outline-none focus:ring-2 ${
-                    selectedImage === index
+                  className={`aspect-square cursor-pointer overflow-hidden rounded-lg border-2 transition-all focus:outline-none focus:ring-2 ${selectedImage === index
                       ? "border-emerald-500 ring-emerald-200"
                       : "border-border hover:border-emerald-200"
-                  }`}
+                    }`}
                   aria-label={`View image ${index + 1}`}
                 >
                   <img
@@ -197,54 +197,12 @@ export default function ProductDetail() {
             <span className="text-muted-foreground">{data.unit}</span>
           </div>
 
-          {/* Quantity Selector */}
-          <div className="flex items-center gap-4">
-            <label className="text-foreground font-medium">Quantity:</label>
-            <div className="flex items-center border border-border rounded-lg bg-card">
-              <button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="px-4 py-2 cursor-pointer text-muted-foreground hover:text-foreground disabled:opacity-50"
-                disabled={quantity <= 1}
-                aria-label="Decrease quantity"
-              >
-                −
-              </button>
-              <span className="px-4 py-2 text-foreground font-medium min-w-12 text-center">{quantity}</span>
-              <button
-                onClick={() => setQuantity(quantity + 1)}
-                className="px-4 py-2 cursor-pointer text-muted-foreground hover:text-foreground disabled:opacity-50"
-                disabled={quantity >= data.stock}
-                aria-label="Increase quantity"
-              >
-                +
-              </button>
-            </div>
-          </div>
+
 
           {/* Actions */}
           <div className="flex gap-4 pt-4 flex-col sm:flex-row">
-            <button
-              onClick={handleAddToCart}
-              disabled={data.stock === 0}
-              className="flex-1 cursor-pointer bg-gradient-to-r from-green-500 to-emerald-600 disabled:from-muted disabled:to-muted text-white py-4 px-6 rounded-lg font-semibold text-lg transition-colors duration-200 flex items-center justify-center gap-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-300"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5.5M7 13l2.5 5.5m0 0L17 21"
-                />
-              </svg>
-              Add to Cart
-            </button>
-            <button
-              onClick={handleBuyNow}
-              disabled={data.stock === 0}
-              className="flex-1 border cursor-pointer border-emerald-600 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 py-4 px-6 rounded-lg font-semibold text-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-300"
-            >
-              Buy Now
-            </button>
+            <AddToCartButton data={data} className="w-full max-w-md py-4  rounded-lg"/>
+
           </div>
 
           {/* Key Features */}

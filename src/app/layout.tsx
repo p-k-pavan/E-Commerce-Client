@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import ReduxProvider from "@/providers/ReduxProvider";
 import Navbar from "@/components/Navbar"
+import { GlobalProvider } from "@/context/GlobalContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,10 +35,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ReduxProvider>
+          <GlobalProvider> 
           <Navbar />
           {children}
           
           <Toaster />
+          </GlobalProvider>
         </ReduxProvider>
         
       </body>

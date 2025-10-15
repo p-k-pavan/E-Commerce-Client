@@ -132,13 +132,13 @@ function CategoryWiseProductDisplay({
                         </div>
                     ) : (
                         data.map((product: any) => (
-                            <Link href={`/product/${product._id}`}>
+                            
                                 <ProductCard
-                                    key={product.id}
+                                    key={product._id}
                                     product={product}
                                     onAddToCart={handleProductAddToCart}
                                 />
-                            </Link>
+                            
                         ))
                     )}
                 </div>

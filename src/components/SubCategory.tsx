@@ -105,7 +105,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
         'Failed to fetch products. Please try again.';
 
       setError(errorMessage);
-      toast.error(errorMessage);
+      toast(errorMessage);
     } finally {
       setLoading(false);
     }

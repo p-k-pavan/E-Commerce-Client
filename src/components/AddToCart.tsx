@@ -112,7 +112,7 @@ export default function AddToCartButton({ data , className}: AddToCartButtonProp
           <button
             onClick={handleDecrease}
             disabled={btnLoading || cartLoading}
-            className="flex-1  hover:bg-green-700 flex items-center justify-center"
+            className="flex-1 py-1 cursor-pointer hover:bg-green-700 flex items-center justify-center"
           >
             <FaMinus />
           </button>
@@ -124,7 +124,7 @@ export default function AddToCartButton({ data , className}: AddToCartButtonProp
           <button
             onClick={handleIncrease}
             disabled={btnLoading || cartLoading}
-            className="flex-1  hover:bg-green-700 flex items-center justify-center"
+            className="flex-1 py-1 cursor-pointer hover:bg-green-700 flex items-center justify-center"
           >
             <FaPlus />
           </button>
@@ -133,7 +133,7 @@ export default function AddToCartButton({ data , className}: AddToCartButtonProp
         <button
           onClick={handleAddToCart}
           disabled={btnLoading || cartLoading}
-          className={`w-full py-1 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition ${className}`}
+          className={`w-full py-1 cursor-pointer bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition ${className}`}
         >
           {btnLoading ? 'Adding…' : 'Add'}
         </button>

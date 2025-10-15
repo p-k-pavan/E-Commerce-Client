@@ -2,9 +2,10 @@
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useEffect, useState, useCallback, memo } from "react";
-import { FaUserCircle } from 'react-icons/fa';
-import { AiOutlineClose } from 'react-icons/ai';
+import { FaUserCircle } from "react-icons/fa";
+import { AiOutlineClose } from "react-icons/ai";
 import { FiShoppingCart } from "react-icons/fi";
+import { BsCart4 } from "react-icons/bs";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -17,81 +18,60 @@ import Link from "next/link";
 import Search from "./search";
 import { logout } from "@/store/slices/authSlice";
 import { useRouter } from "next/navigation";
+import DisplayCartItem from "./DisplayCartItem";
+import CartMobileLink from "./CartMobileLink";
 
-// ----------------------------- Admin Links -----------------------------
 const AdminLinks = memo(({ user }: { user: any }) => {
   if (user?.role !== "ADMIN") return null;
-
   return (
     <>
       <NavigationMenuLink asChild>
-        <Link href="/dashboard/category" className="block p-2 hover:bg-gray-100 rounded transition-colors">
-          <div className="font-medium">Category</div>
-        </Link>
+        <Link href="/dashboard/category" className="block p-2 hover:bg-gray-100 rounded transition-colors">Category</Link>
       </NavigationMenuLink>
       <NavigationMenuLink asChild>
-        <Link href="/dashboard/sub-category" className="block p-2 hover:bg-gray-100 rounded transition-colors">
-          <div className="font-medium">SubCategory</div>
-        </Link>
+        <Link href="/dashboard/sub-category" className="block p-2 hover:bg-gray-100 rounded transition-colors">SubCategory</Link>
       </NavigationMenuLink>
       <NavigationMenuLink asChild>
-        <Link href="/dashboard/upload-product" className="block p-2 hover:bg-gray-100 rounded transition-colors">
-          <div className="font-medium">Upload Product</div>
-        </Link>
+        <Link href="/dashboard/upload-product" className="block p-2 hover:bg-gray-100 rounded transition-colors">Upload Product</Link>
       </NavigationMenuLink>
       <NavigationMenuLink asChild>
-        <Link href="/dashboard/product" className="block p-2 hover:bg-gray-100 rounded transition-colors">
-          <div className="font-medium">Product</div>
-        </Link>
+        <Link href="/dashboard/product" className="block p-2 hover:bg-gray-100 rounded transition-colors">Product</Link>
       </NavigationMenuLink>
     </>
   );
 });
 AdminLinks.displayName = "AdminLinks";
 
-// ----------------------------- User Links -----------------------------
 const UserLinks = memo(() => (
   <>
     <NavigationMenuLink asChild>
-      <Link href="/dashboard/my-orders" className="block p-2 hover:bg-gray-100 rounded transition-colors">
-        <div className="font-medium">My Orders</div>
-      </Link>
+      <Link href="/dashboard/my-orders" className="block p-2 hover:bg-gray-100 rounded transition-colors">My Orders</Link>
     </NavigationMenuLink>
     <NavigationMenuLink asChild>
-      <Link href="/dashboard/save-address" className="block p-2 hover:bg-gray-100 rounded transition-colors">
-        <div className="font-medium">Save Address</div>
-      </Link>
+      <Link href="/dashboard/save-address" className="block p-2 hover:bg-gray-100 rounded transition-colors">Save Address</Link>
     </NavigationMenuLink>
   </>
 ));
 UserLinks.displayName = "UserLinks";
 
-// ----------------------------- Mobile Menu -----------------------------
-const MobileMenu = memo(({ isOpen, onClose, user, onLogout }: any) => {
+const MobileMenu = memo(({ isOpen, onClose, user, onLogout, onCartClick }: any) => {
   if (!isOpen) return null;
-
   return (
-    <div className="lg:hidden absolute top-16 left-0 right-0 bg-white shadow-lg border-t border-gray-200 z-50 animate-in slide-in-from-top duration-300 mobile-menu-content">
+    <div className="lg:hidden absolute top-16 left-0 right-0 bg-white shadow-lg border-t border-gray-200 z-50 animate-in slide-in-from-top duration-300">
       <div className="container mx-auto px-4 py-4 space-y-4">
-
-        {/* Search (visible on mobile) */}
         <div className="pb-3">
           <Search />
         </div>
 
-        {/* Not Logged In */}
         {!user && (
           <div className="space-y-3">
             <Link href="/login" onClick={onClose} className="block w-full py-2 px-3 text-center bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
               Login
             </Link>
-            <Link href="/cart" onClick={onClose} className="flex justify-center items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-              <FiShoppingCart className="mr-2 text-lg" /> Cart
-            </Link>
+
           </div>
         )}
 
-        {/* Logged In */}
         {user && (
           <>
             {user?.role === "ADMIN" && (
@@ -103,14 +83,10 @@ const MobileMenu = memo(({ isOpen, onClose, user, onLogout }: any) => {
                 <Link href="/dashboard/product" onClick={onClose} className="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Product</Link>
               </div>
             )}
-
             <div className="space-y-2">
               <div className="font-medium text-gray-500 text-sm uppercase tracking-wide">Account</div>
               <Link href="/dashboard/my-orders" onClick={onClose} className="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">My Orders</Link>
               <Link href="/dashboard/save-address" onClick={onClose} className="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Save Address</Link>
-              <Link href="/cart" onClick={onClose} className="flex items-center py-2 px-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                <FiShoppingCart className="mr-2 text-lg" /> Cart
-              </Link>
               <button onClick={() => { onLogout(); onClose(); }} className="w-full text-left py-2 px-3 text-red-600 hover:bg-red-50 rounded-lg font-medium">Logout</button>
             </div>
           </>
@@ -121,12 +97,16 @@ const MobileMenu = memo(({ isOpen, onClose, user, onLogout }: any) => {
 });
 MobileMenu.displayName = "MobileMenu";
 
-// ----------------------------- Main Navigation -----------------------------
 export default function Navigation() {
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { cart } = useAppSelector((state) => state.cart);
+  const [totalQty, setTotalQty] = useState(0);
+  const [total, setTotal] = useState(0);
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -136,8 +116,10 @@ export default function Navigation() {
   }, []);
 
   useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [router]);
+  if (isMobileMenuOpen) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}, [isMobileMenuOpen]);
 
   const handleLogout = useCallback(() => {
     dispatch(logout());
@@ -147,6 +129,27 @@ export default function Navigation() {
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen((prev) => !prev);
   }, []);
+
+  const toggleCart = useCallback(() => {
+    setIsCartOpen((prev) => !prev);
+  }, []);
+
+  useEffect(() => {
+    if (!cart || cart.length === 0) return;
+    let before = 0, after = 0;
+    cart.forEach((item) => {
+      const { price, discount } = item.productId;
+      const quantity = item.quantity;
+      const itemBefore = price * quantity;
+      const itemDiscountAmount = (price * discount) / 100;
+      const itemAfter = (price - itemDiscountAmount) * quantity;
+      before += itemBefore;
+      after += itemAfter;
+    })
+    setTotal(after)
+    const qty = cart.reduce((preve, curr) => preve + curr.quantity, 0);
+    setTotalQty(qty);
+  }, [cart])
 
   return (
     <>
@@ -163,14 +166,8 @@ export default function Navigation() {
               <Search />
             </div>
 
-            {/* Right Side Buttons */}
             <div className="flex items-center space-x-4">
-              {/* Cart (Desktop only) */}
-              <Link href="/cart" className="hidden lg:flex items-center text-white hover:text-yellow-300 transition-colors duration-200">
-                <FiShoppingCart className="text-2xl" />
-              </Link>
 
-              {/* Account / Login */}
               <div className="hidden lg:flex items-center">
                 {user ? (
                   <NavigationMenu>
@@ -202,6 +199,24 @@ export default function Navigation() {
                 )}
               </div>
 
+              <button onClick={toggleCart} className="hidden lg:flex items-center gap-2 bg-green-800 hover:bg-green-700 px-3 py-2 rounded text-white">
+                <div className='animate-bounce'>
+                  <BsCart4 size={26} />
+                </div>
+                <div className='font-semibold text-sm'>
+                  {
+                    cart[0] ? (
+                      <div>
+                        <p>{totalQty} Items</p>
+                        <p>{total.toFixed(2)}</p>
+                      </div>
+                    ) : (
+                      <p>My Cart</p>
+                    )
+                  }
+                </div>
+              </button>
+
               {/* Mobile Menu Button */}
               <button onClick={toggleMobileMenu} className="lg:hidden p-2 text-white hover:bg-white/20 rounded-lg transition" aria-label="Toggle menu">
                 {isMobileMenuOpen ? <AiOutlineClose className="w-7 h-7" /> : <FaUserCircle className="w-7 h-7" />}
@@ -211,8 +226,19 @@ export default function Navigation() {
         </div>
       </header>
 
-      {/* Mobile Menu */}
-      <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} user={user} onLogout={handleLogout} />
+
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        user={user}
+        onLogout={handleLogout}
+        onCartClick={toggleCart}
+      />
+
+      <CartMobileLink onCartClick={toggleCart} />
+
+
+      {isCartOpen && <DisplayCartItem close={() => setIsCartOpen(false)} />}
 
       <style jsx global>{`
         body {

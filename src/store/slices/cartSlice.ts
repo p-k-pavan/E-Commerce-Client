@@ -4,6 +4,9 @@ interface CartProduct {
   _id: string;
   name: string;
   price: number;
+  image:string;
+  unit:string;
+  discount:number
 }
 
 interface CartItem {

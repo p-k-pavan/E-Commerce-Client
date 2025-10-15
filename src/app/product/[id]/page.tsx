@@ -139,14 +139,14 @@ export default function ProductDetail() {
 
           {/* Thumbnail Images */}
           {data.image.length > 1 && (
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-6 gap-3">
               {data.image.map((img, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
                   className={`aspect-square cursor-pointer overflow-hidden rounded-lg border-2 transition-all focus:outline-none focus:ring-2 ${selectedImage === index
-                      ? "border-emerald-500 ring-emerald-200"
-                      : "border-border hover:border-emerald-200"
+                    ? "border-emerald-500 ring-emerald-200"
+                    : "border-border hover:border-emerald-200"
                     }`}
                   aria-label={`View image ${index + 1}`}
                 >
@@ -201,7 +201,10 @@ export default function ProductDetail() {
 
           {/* Actions */}
           <div className="flex gap-4 pt-4 flex-col sm:flex-row">
-            <AddToCartButton data={data} className="w-full max-w-md py-4  rounded-lg"/>
+            {data.stock === 0 ?
+              <button className="text-xs px-3 py-2 rounded transition-all duration-200 
+                      font-medium bg-gray-300 text-gray-500 cursor-not-allowed">Out of Stock</button>
+              : <AddToCartButton data={data} />}
 
           </div>
 
@@ -272,12 +275,12 @@ export default function ProductDetail() {
   )
 }
 
-// Helper component for detail cards
 function DetailCard({ title, value }: { title: string; value: string }) {
   return (
-    <div className="bg-white border border-border rounded-lg p-4 shadow-sm">
+    <div className="bg-white border border-border rounded-lg cursor-pointer p-4 shadow-sm transform transition-transform duration-300 hover:scale-105">
       <h4 className="font-semibold text-foreground text-lg mb-2">{title}</h4>
       <p className="text-muted-foreground">{value}</p>
     </div>
-  )
+  );
 }
+

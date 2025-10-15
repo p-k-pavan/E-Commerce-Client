@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import {
@@ -8,8 +8,8 @@ import {
   setCartLoading,
   setCartError,
 } from '@/store/slices/cartSlice';
+import { useAppSelector } from '@/store/hooks';
 
-// --- Types ---
 interface GlobalContextType {
   fetchCartItems: () => Promise<void>;
   updateCartItem: (_id: string, qty: number) => Promise<{ success: boolean }>;
@@ -20,14 +20,15 @@ interface GlobalProviderProps {
   children: ReactNode;
 }
 
-// --- Create context ---
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
-// --- Provider ---
 export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   const dispatch = useDispatch();
+  const [totalPrice, setTotalPrice] = useState(0)
+  const [notDiscountTotalPrice, setNotDiscountTotalPrice] = useState(0)
+  const [totalQty, setTotalQty] = useState(0)
+  const { cart, loading: cartLoading } = useAppSelector((state) => state.cart);
 
-  // 🛒 Fetch all cart items
   const fetchCartItems = async (): Promise<void> => {
     try {
       dispatch(setCartLoading(true));
@@ -43,13 +44,11 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Failed to fetch cart items';
       dispatch(setCartError(msg));
-      console.error('❌ Fetch cart error:', msg);
     } finally {
       dispatch(setCartLoading(false));
     }
   };
 
-  // ♻️ Update quantity
   const updateCartItem = async (
     _id: string,
     qty: number
@@ -66,20 +65,17 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         }
       );
 
-      // refresh cart state
       await fetchCartItems();
       return { success: true };
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Failed to update cart item';
       dispatch(setCartError(msg));
-      console.error('❌ Update cart error:', msg);
       return { success: false };
     } finally {
       dispatch(setCartLoading(false));
     }
   };
 
-  // 🗑️ Delete item
   const deleteCartItem = async (
     _id: string
   ): Promise<{ success: boolean }> => {
@@ -97,12 +93,19 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Failed to delete cart item';
       dispatch(setCartError(msg));
-      console.error('❌ Delete cart error:', msg);
       return { success: false };
     } finally {
       dispatch(setCartLoading(false));
     }
   };
+
+  useEffect(()=>{
+    const qty = cart.reduce((prev,curr)=>{
+      return prev + curr.quantity
+    },0)
+    setTotalQty(qty);
+    
+  },[cart])
 
   const value: GlobalContextType = {
     fetchCartItems,
@@ -113,7 +116,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   return <GlobalContext.Provider value={value}>{children}</GlobalContext.Provider>;
 };
 
-// --- Custom hook ---
+
 export const useGlobalContext = (): GlobalContextType => {
   const context = useContext(GlobalContext);
   if (!context)

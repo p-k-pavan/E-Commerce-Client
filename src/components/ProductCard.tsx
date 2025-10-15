@@ -33,7 +33,6 @@ const ProductCard = memo(({
     return product.price - (product.price * product.discount / 100);
   };
 
-  console.log(product)
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -80,15 +79,15 @@ const ProductCard = memo(({
 
       {/* Product Details */}
       <div className="p-3 space-y-2">
+        <Link href={`/product/${product._id}`}>
 
-
-        <h4
-          className="font-medium text-sm text-gray-800 line-clamp-2 hover:text-green-600 transition-colors duration-200 cursor-pointer"
-          title={product.name}
-        >
-          {product.name}
-        </h4>
-
+          <h4
+            className="font-medium text-sm text-gray-800 line-clamp-2 hover:text-green-600 transition-colors duration-200 cursor-pointer"
+            title={product.name}
+          >
+            {product.name}
+          </h4>
+        </Link>
         {/* Price and Add to Cart */}
         <div className="flex items-center justify-between pt-1">
           <div className="flex items-center gap-2">
@@ -96,7 +95,7 @@ const ProductCard = memo(({
               ₹{discountedPrice.toFixed(2)}
             </span>
             {product.discount && product.discount > 0 && (
-              <span className="text-xs text-gray-500 line-through">
+              <span className="hidden lg:inline text-xs text-gray-500 line-through">
                 ₹{product.price.toFixed(2)}
               </span>
             )}

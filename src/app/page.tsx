@@ -7,12 +7,15 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import CategoryWiseProductDisplay from "@/components/CategoryWiseProductDisplay"
+import { useAppSelector } from "@/store/hooks";
 
 
 export default function Home() {
     const [category, setCategory] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { cart, loading: cartLoading } = useAppSelector((state) => state.cart);
 
+console.log(cart)
     useEffect(() => {
         const fetchCategory = async () => {
             try {

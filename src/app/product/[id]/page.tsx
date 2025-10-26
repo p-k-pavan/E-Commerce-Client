@@ -84,19 +84,6 @@ export default function ProductDetail() {
     }
   }, [productId])
 
-  const handleAddToCart = () => {
-    if (!data) return
-
-    toast.success(`${data.name} added to cart!`)
-    // Add your cart logic here
-  }
-
-  const handleBuyNow = () => {
-    if (!data) return
-
-    toast.success(`Proceeding to buy ${data.name}`)
-    // Add your buy now logic here
-  }
 
   if (loading) {
     return (

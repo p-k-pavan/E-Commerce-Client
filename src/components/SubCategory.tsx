@@ -36,8 +36,8 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
     try {
       setSubCategoriesLoading(true);
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/subCategory/get-subcategoty-by-categoryId`,
-        { id: categoryId },
+        `${process.env.NEXT_PUBLIC_BASE_URL}/subCategory/get-subcategory-by-categoryId`,
+        {  categoryId: categoryId },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -237,11 +237,11 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3">
               {products.map((product: any) => (
-                <Link href={`/product/${product._id}`}>
+                <Link key={product.id} href={`/product/${product._id}`}>
                   <ProductCard
-                    key={product.id}
+                    
                     product={product}
                     onAddToCart={handleAddToCart}
                     className="w-full"

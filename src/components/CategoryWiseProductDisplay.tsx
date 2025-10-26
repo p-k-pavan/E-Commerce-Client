@@ -148,14 +148,14 @@ function CategoryWiseProductDisplay({
                     <div className="w-full left-0 right-0 container mx-auto px-2 absolute hidden lg:flex justify-between pointer-events-none">
                         <button
                             onClick={handleScrollLeft}
-                            className="pointer-events-auto z-10 relative bg-white hover:bg-gray-50 shadow-lg text-lg p-3 rounded-full transition-all duration-200 hover:shadow-xl"
+                            className="pointer-events-auto cursor-pointer z-10 relative bg-white hover:bg-gray-50 shadow-lg text-lg p-3 rounded-full transition-all duration-200 hover:shadow-xl"
                             aria-label="Scroll left"
                         >
                             <FaAngleLeft />
                         </button>
                         <button
                             onClick={handleScrollRight}
-                            className="pointer-events-auto z-10 relative bg-white hover:bg-gray-50 shadow-lg p-3 text-lg rounded-full transition-all duration-200 hover:shadow-xl"
+                            className="pointer-events-auto cursor-pointer z-10 relative bg-white hover:bg-gray-50 shadow-lg p-3 text-lg rounded-full transition-all duration-200 hover:shadow-xl"
                             aria-label="Scroll right"
                         >
                             <FaAngleRight />

@@ -1,5 +1,6 @@
 "use client"
 import AddToCartButton from "@/components/AddToCart"
+import { useAppSelector } from "@/store/hooks"
 import axios from "axios"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -50,6 +51,7 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
+  const { user } = useAppSelector((state) => state.auth);
 
   const params = useParams()
   const productId = params.id as string
@@ -104,6 +106,33 @@ export default function ProductDetail() {
 
   const discountedPrice = data.price - (data.price * data.discount) / 100
   const savings = data.price - discountedPrice
+
+
+
+  const handleDelete = async (productId: any) => {
+    try {
+      const response = await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/product/${productId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      })
+      if (response.data.success == true) {
+        toast("Success", {
+          description: response.data.message
+        })
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Failed to fetch products. Please try again.';
+      toast('Error', {
+        description: errorMessage
+      });
+    }
+
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -188,10 +217,26 @@ export default function ProductDetail() {
 
           {/* Actions */}
           <div className="flex gap-4 pt-4 flex-col sm:flex-row">
-            {data.stock === 0 ?
-              <button className="text-xs px-3 py-2 rounded transition-all duration-200 
-                      font-medium bg-gray-300 text-gray-500 cursor-not-allowed">Out of Stock</button>
-              : <AddToCartButton data={data} />}
+            {user?.role == "ADMIN" ? (
+              <button
+                onClick={() => handleDelete(data._id)}
+                className="text-xs px-3 py-2 rounded transition-all duration-200 
+    font-medium bg-red-500 text-white hover:bg-red-600"
+              >
+                Delete
+              </button>
+            ) : (
+              data.stock === 0 ? (
+                <button
+                  className="text-xs px-3 py-2 rounded transition-all duration-200 
+      font-medium bg-gray-300 text-gray-500 cursor-not-allowed"
+                >
+                  Out of Stock
+                </button>
+              ) : (
+                <AddToCartButton data={data} />
+              )
+            )}
 
           </div>
 

@@ -28,9 +28,6 @@ const AdminLinks = memo(({ user }: { user: any }) => {
         <Link href="/dashboard/category" className="block p-2 hover:bg-gray-100 rounded transition-colors">Category</Link>
       </NavigationMenuLink>
       <NavigationMenuLink asChild>
-        <Link href="/dashboard/sub-category" className="block p-2 hover:bg-gray-100 rounded transition-colors">SubCategory</Link>
-      </NavigationMenuLink>
-      <NavigationMenuLink asChild>
         <Link href="/dashboard/upload-product" className="block p-2 hover:bg-gray-100 rounded transition-colors">Upload Product</Link>
       </NavigationMenuLink>
       <NavigationMenuLink asChild>
@@ -74,7 +71,6 @@ const MobileMenu = memo(({ isOpen, onClose, user, onLogout, onCartClick }: any) 
               <div className="space-y-2">
                 <div className="font-medium text-gray-500 text-sm uppercase tracking-wide">Admin</div>
                 <Link href="/dashboard/category" onClick={onClose} className="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Category</Link>
-                <Link href="/dashboard/sub-category" onClick={onClose} className="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">SubCategory</Link>
                 <Link href="/dashboard/upload-product" onClick={onClose} className="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Upload Product</Link>
                 <Link href="/dashboard/product" onClick={onClose} className="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Product</Link>
               </div>

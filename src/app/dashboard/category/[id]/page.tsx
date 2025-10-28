@@ -330,7 +330,7 @@ export default function SubCategoryPage() {
                                 className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300"
                             >
                                 {/* Image Section */}
-                                <Link href={`/dashboard/category/${category._id}`}>
+                                <Link href={`/dashboard/category/${categoryId}/subCategory/${category._id}`}>
                                     <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden group">
                                         {category.image ? (
                                             <img
@@ -354,7 +354,7 @@ export default function SubCategoryPage() {
                                 {/* Content Section */}
                                 <div className="p-4">
                                     <div className="flex items-center justify-between">
-                                        <Link href={`/dashboard/category/${category._id}`} className="flex-1 min-w-0">
+                                        <Link href={`/dashboard/category/${categoryId}/subCategory/${category._id}`} className="flex-1 min-w-0">
                                             <h4 className="text-lg font-semibold text-gray-800 truncate hover:text-blue-600 transition-colors">
                                                 {category.name}
                                             </h4>

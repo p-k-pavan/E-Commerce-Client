@@ -81,11 +81,11 @@ export default function DisplayCartItem({ close }: { close: () => void }) {
                                             <div className="text-xs">
                                                 <p className="line-clamp-2">{item?.productId?.name}</p>
                                                 <p className="text-neutral-400">{item?.productId?.unit}</p>
-                                                <p className="font-semibold">₹{calculateDiscountedPrice(item)}</p>
+                                                <p className="font-semibold">₹{calculateDiscountedPrice(item).toFixed(2)}</p>
                                             </div>
                                         </div>
 
-                                        
+
                                         <div className="w-16 flex justify-end items-center">
                                             <AddToCartButton data={item?.productId} />
                                         </div>
@@ -99,8 +99,8 @@ export default function DisplayCartItem({ close }: { close: () => void }) {
                                 <div className="flex justify-between">
                                     <p>Items total</p>
                                     <p>
-                                        <span className="line-through text-neutral-400">₹{totals.beforeDiscount}</span>{" "}
-                                        ₹{totals.afterDiscount}
+                                        <span className="line-through text-neutral-400">₹{totals.beforeDiscount.toFixed(2)}</span>{" "}
+                                        ₹{totals.afterDiscount.toFixed(2)}
                                     </p>
                                 </div>
                                 <div className="flex justify-between">
@@ -113,7 +113,7 @@ export default function DisplayCartItem({ close }: { close: () => void }) {
                                 </div>
                                 <div className="font-semibold flex justify-between">
                                     <p>Grand total</p>
-                                    <p>₹{totals.afterDiscount}</p>
+                                    <p>₹{totals.afterDiscount.toFixed(2)}</p>
                                 </div>
                             </div>
                         </>
@@ -127,13 +127,18 @@ export default function DisplayCartItem({ close }: { close: () => void }) {
 
                 {cart?.length > 0 && (
                     <div className="p-2">
-                        <div className="bg-green-700 text-neutral-100 px-4 font-bold text-base py-4 rounded flex items-center justify-between">
-                            <div>₹{totals.afterDiscount}</div>
-                            <button className="flex items-center gap-1">
-                                Proceed <FaCaretRight />
-                            </button>
+                        <Link href={"/checkout"}>
+                        <div className="bg-green-700 cursor-pointer text-neutral-100 px-4 font-bold text-base py-4 rounded flex items-center justify-between">
+                            <div>₹{totals.afterDiscount.toFixed(2)}</div>
+                            
+
+                                <button className="flex items-center gap-1 cursor-pointer">
+                                    Proceed <FaCaretRight />
+                                </button>
                         </div>
+                         </Link>
                     </div>
+                   
                 )}
             </div>
         </div>

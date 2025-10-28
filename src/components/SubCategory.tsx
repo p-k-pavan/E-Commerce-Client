@@ -127,7 +127,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
 
   const handleAddToCart = (product: Product) => {
     toast.success(`${product.name} added to cart`);
-    // Add your cart logic here
+    
   };
 
   return (

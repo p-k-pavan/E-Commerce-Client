@@ -107,7 +107,7 @@ export default function Page() {
                                 />
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="space-yb-2">
                                 <label htmlFor="password" className="block text-sm font-semibold text-gray-700">
                                     Password
                                 </label>
@@ -120,6 +120,15 @@ export default function Page() {
                                     onChange={handleChange}
                                     className="w-full px-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50 text-gray-800 placeholder-gray-400"
                                 />
+                            </div>
+
+                            <div className="flex justify-end">
+                                <Link
+                                    href="/forgot-password"
+                                    className="text-sm text-emerald-600 hover:text-emerald-700 font-medium transition-colors duration-200"
+                                >
+                                    Forgot password?
+                                </Link>
                             </div>
 
                             <button

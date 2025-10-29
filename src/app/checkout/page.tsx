@@ -79,6 +79,8 @@ export default function Page() {
         totalDiscount: 0
     })
 
+    console.log(cart)
+
     useEffect(() => {
         if (!cart || cart.length === 0) return
 

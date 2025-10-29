@@ -114,7 +114,7 @@ const ProductCard = memo(({
         <Link href={`/product/${product._id}`}>
 
           <h4
-            className="font-medium text-sm text-gray-800 line-clamp-2 hover:text-green-600 transition-colors duration-200 cursor-pointer"
+            className="font-medium text-sm text-gray-800 hover:text-green-600 transition-colors duration-200 cursor-pointer line-clamp-1"
             title={product.name}
           >
             {product.name}
@@ -132,7 +132,7 @@ const ProductCard = memo(({
               </span>
             )}
           </div>
-          {user?.role == "ADMIN" ? (
+          {user?.role == "ADMIM" ? (
             <button
               onClick={() => handleDelete(product._id)}
               className="text-xs px-3 py-2 rounded transition-all duration-200 

@@ -131,7 +131,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
   };
 
   return (
-    <div className="container mx-auto px-3 py-6">
+    <div className="container mx-auto px-3 py-6 bg-gray-100">
       <div className="flex flex-row gap-4">
         <div className="w-1/4 md:w-1/4 lg:w-1/5">
           <div className="sticky top-24 bg-white rounded-lg shadow-sm border border-gray-200 p-3 max-h-[85vh] flex flex-col">

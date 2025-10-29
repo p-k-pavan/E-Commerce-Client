@@ -15,7 +15,6 @@ export default function Home() {
     const [loading, setLoading] = useState(true);
     const { cart, loading: cartLoading } = useAppSelector((state) => state.cart);
 
-console.log(cart)
     useEffect(() => {
         const fetchCategory = async () => {
             try {
@@ -28,8 +27,6 @@ console.log(cart)
                         withCredentials: true,
                     }
                 );
-
-                console.log(response.data.data);
 
                 if (response.data.success === true) {
                     setCategory(response.data.data);

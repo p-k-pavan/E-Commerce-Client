@@ -1,10 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    // Add supported experimental options here if needed
-  },
-  srcDir: "src", 
+  /* config options here */
 };
 
 export default nextConfig;

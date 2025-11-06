@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import CategoryWiseProductDisplay from "@/components/CategoryWiseProductDisplay"
 import { useAppSelector } from "@/store/hooks";
+import ProductSkeleton from "@/components/ProductSkeleton";
 
 
 export default function Home() {
@@ -58,6 +59,7 @@ export default function Home() {
                     Array.from({ length: 10 }).map((_, index) => (
                         <div key={index} className="flex flex-col items-center space-y-2">
                             <Skeleton className="w-32 h-32 rounded-lg" />
+                             <Skeleton className="w-32 h-32 rounded-lg" />
                         </div>
                     ))
                     :
@@ -73,13 +75,26 @@ export default function Home() {
                         </Link>
                     ))}
             </div>
-            {category.map((cat: any) => (
-                <CategoryWiseProductDisplay
-                    key={cat._id}
-                    id={cat._id}
-                    name={cat.name}
-                />
-            ))}
+         {loading ? (
+    Array.from({ length: 5 }).map((_, index) => (
+        <div key={index} className="container mx-auto p-4 flex items-center justify-between gap-4">
+            <ProductSkeleton />
+            <ProductSkeleton />
+            <ProductSkeleton />
+            <ProductSkeleton />
+            <ProductSkeleton />
+        </div>
+    ))
+) : (
+    category.map((cat: any) => (
+        <CategoryWiseProductDisplay
+            key={cat._id}
+            id={cat._id}
+            name={cat.name}
+        />
+    ))
+)}
+
         </div>
     );
 }

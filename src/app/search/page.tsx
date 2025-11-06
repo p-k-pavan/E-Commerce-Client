@@ -6,43 +6,8 @@ import axios from "axios";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { toast } from "sonner";
 import Link from "next/link";
-
-// ✅ Product Card Component
-const ProductCard = ({ product }: { product: any }) => (
-  <Link
-    href={`/product/${product._id}`}
-    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-gray-100"
-  >
-    <div className="aspect-w-1 aspect-h-1 w-full">
-      <img
-        src={product.image[0] || "/placeholder-product.jpg"}
-        alt={product.name}
-        className="w-full h-48 object-cover"
-      />
-    </div>
-    <div className="p-4">
-      <h3 className="font-semibold text-gray-800 text-sm lg:text-base line-clamp-2 mb-2">
-        {product.name}
-      </h3>
-      <div className="flex items-center justify-between">
-        <span className="text-lg font-bold text-emerald-600">
-          ₹{product.price}
-        </span>
-        {product.originalPrice && product.originalPrice > product.price && (
-          <span className="text-sm text-gray-500 line-through">
-            ₹{product.originalPrice}
-          </span>
-        )}
-      </div>
-      {product.discount && (
-        <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">
-          {product.discount}% OFF
-        </span>
-      )}
-    </div>
-  </Link>
-);
-
+import ProductCard from "@/components/ProductCard";
+import ProductSkeleton from "@/components/ProductSkeleton";
 
 interface Product {
   _id: string;
@@ -79,24 +44,22 @@ const SearchPage = () => {
         const response = await axios.post<SearchResponse>(
           `${process.env.NEXT_PUBLIC_BASE_URL}/product/search-product`,
           {
-            search: searchText.trim(), 
+            search: searchText.trim(),
             page: currentPage,
             limit: 12,
           },
           {
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             withCredentials: true,
           }
         );
 
-        if (response.data.error) {
-          toast.error(response.data.message || "Search failed");
+        const responseData = response.data;
+
+        if (responseData.error) {
+          toast.error(responseData.message || "Search failed");
           return;
         }
-
-        const responseData = response.data;
 
         if (responseData.success) {
           if (isNewSearch || currentPage === 1) {
@@ -104,7 +67,6 @@ const SearchPage = () => {
           } else {
             setData((prev) => [...prev, ...(responseData.data || [])]);
           }
-
           setTotalPage(responseData.totalPage || 1);
           setHasMore(currentPage < (responseData.totalPage || 1));
         }
@@ -145,35 +107,54 @@ const SearchPage = () => {
   };
 
   return (
-    <section className="bg-white">
-      <div className="container mx-auto p-4">
-        <p className="font-semibold">
+    <section className="bg-white min-h-screen">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 py-4">
+        <p className="font-semibold text-gray-800 text-sm sm:text-base">
           Search Results: {data.length}{" "}
-          {searchText && <span className="text-gray-500">for “{searchText}”</span>}
+          {searchText && (
+            <span className="text-gray-500">
+              for “{searchText}”
+            </span>
+          )}
         </p>
 
-        <InfiniteScroll
-          dataLength={data.length}
-          hasMore={hasMore}
-          next={handleFetchMore}
-          loader={<div className="text-center py-4">Loading more...</div>}
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 py-4 gap-4">
-            {data.map((p, index) => (
-              <ProductCard key={`${p._id}-${index}`} product={p} />
+        {loading && !data.length ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mt-4">
+            {Array.from({ length: 10 }).map((_, index) => (
+              <ProductSkeleton key={index} />
             ))}
           </div>
-        </InfiniteScroll>
+        ) : (
+          <InfiniteScroll
+            dataLength={data.length}
+            hasMore={hasMore}
+            next={handleFetchMore}
+            loader={
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mt-6">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <ProductSkeleton key={index} />
+                ))}
+              </div>
+            }
+          >
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 py-4 gap-3 sm:gap-4">
+              {data.map((p) => (
+                <Link key={p._id} href={`/product/${p._id}`}>
+                  <ProductCard product={p} className="w-full h-full" />
+                </Link>
+              ))}
+            </div>
+          </InfiniteScroll>
+        )}
 
-        {/* No data found */}
         {!data.length && !loading && (
-          <div className="flex flex-col justify-center items-center w-full mx-auto mt-10">
+          <div className="flex flex-col justify-center items-center w-full mx-auto mt-12 text-center">
             <img
               src="https://media0.giphy.com/media/IwSG1QKOwDjQk/giphy.gif"
               alt="No data found"
-              className="w-60 h-60 object-contain opacity-80"
+              className="w-48 h-48 sm:w-60 sm:h-60 object-contain opacity-80"
             />
-            <p className="font-semibold mt-2 text-gray-600">
+            <p className="font-semibold mt-3 text-gray-600 text-sm sm:text-base">
               No products found
             </p>
           </div>

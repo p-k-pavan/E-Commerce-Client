@@ -92,12 +92,8 @@ function CategoryWiseProductDisplay({
 
     if (!loading && data.length === 0 && !error) {
         return (
-            <section className={`mb-8 ${className}`} aria-labelledby={`category-${id}-heading`}>
-                <div className="container mx-auto p-4">
-                    <div className="text-center py-8 text-gray-500">
-                        No products found in {name} category
-                    </div>
-                </div>
+            <section>
+
             </section>
         );
     }

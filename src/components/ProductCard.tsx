@@ -75,7 +75,7 @@ const ProductCard = memo(({
 
   return (
     <div
-      className={`flex-shrink-0 w-48 md:w-56 lg:w-64 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:border-green-200 ${className}`}
+      className={`flex-shrink-0 w-48 md:w-56 lg:w-64 bg-blue-50 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:border-green-200 ${className}`}
       data-product-id={product._id}
     >
 

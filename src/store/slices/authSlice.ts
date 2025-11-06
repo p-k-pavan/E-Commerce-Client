@@ -63,6 +63,7 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       state.loading = false;
+      
     },
     
     clearLoading: (state) => {

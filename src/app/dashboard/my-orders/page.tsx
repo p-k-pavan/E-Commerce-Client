@@ -1,6 +1,8 @@
 "use client"
 
+import { useAppSelector } from "@/store/hooks"
 import axios from "axios"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
@@ -20,6 +22,20 @@ interface Orders {
 export default function Page() {
   const [myOrders, setMyOrders] = useState<Orders[]>([])
   const [loading, setLoading] = useState(true)
+
+  const { user } = useAppSelector((state) => state.auth);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      toast("Unauthorized access!");
+      router.push("/login");
+    }
+  }, [user, router]);
+
+  if (!user) {
+    return <div className="text-center py-10">Redirecting...</div>;
+  }
 
   // ✅ Fetch user orders
   const fetchOrders = async () => {

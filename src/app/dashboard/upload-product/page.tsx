@@ -1,5 +1,6 @@
 "use client";
 
+import { useAppSelector } from "@/store/hooks";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -48,6 +49,19 @@ export default function ProductUploadPage() {
   const [categoryData, setCategoryData] = useState<any[]>([]);
   const [subCategoryData, setSubCategoryData] = useState<any[]>([]);
   const [loadingSubCategories, setLoadingSubCategories] = useState(false);
+
+  const { user } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (!user || user.role != "ADMIN") {
+      toast("Unauthorized access!");
+      router.push("/login");
+    }
+  }, [user, router]);
+
+  if (!user || user.role != "ADMIN") {
+    return <div className="text-center py-10">Redirecting...</div>;
+  }
 
   // Fetch categories
   const fetchCategories = async () => {

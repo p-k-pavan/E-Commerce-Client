@@ -1,11 +1,12 @@
 'use client'
 
 import axios from "axios"
-import { useParams } from "next/navigation"
+import { useParams ,useRouter} from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import ProductCard, { Product } from "@/components/ProductCard"
 import Link from "next/link"
+import { useAppSelector } from "@/store/hooks"
 
 export default function ProductPage() {
     const params = useParams()
@@ -17,7 +18,19 @@ export default function ProductPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    console.log(products)
+      const { user } = useAppSelector((state) => state.auth);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user || user.role != "ADMIN") {
+      toast("Unauthorized access!");
+      router.push("/login");
+    }
+  }, [user, router]);
+
+  if (!user || user.role != "ADMIN") {
+    return <div className="text-center py-10">Redirecting...</div>;
+  }
 
     // Fetch products for selected subcategory
     const fetchProducts = async () => {

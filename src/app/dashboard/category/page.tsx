@@ -1,5 +1,6 @@
 'use client'
 
+import { useAppSelector } from "@/store/hooks";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -29,6 +30,21 @@ export default function CategoryPage() {
     const [loading, setLoading] = useState(false);
     const [image, setImage] = useState<File[]>([]);
     const [showCreateForm, setShowCreateForm] = useState(false);
+
+    const { user } = useAppSelector((state) => state.auth);
+    const router = useRouter();
+
+
+    useEffect(() => {
+        if (!user || user.role != "ADMIN") {
+            toast("Unauthorized access!");
+            router.push("/login");
+        }
+    }, [user, router]);
+
+    if (!user || user.role != "ADMIN") {
+        return <div className="text-center py-10">Redirecting...</div>;
+    }
 
     const fetchCategories = async () => {
         try {
@@ -227,7 +243,7 @@ export default function CategoryPage() {
                     <form onSubmit={handleSubmitCategory} className="space-y-6">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                                                        {/* Image Upload */}
+                            {/* Image Upload */}
                             <div className="space-y-4">
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Category Image *

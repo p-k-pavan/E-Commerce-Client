@@ -1,8 +1,9 @@
-'use client'
+"use client";
 
+import { useAppSelector } from "@/store/hooks";
 import axios from "axios";
 import Link from "next/link";
-import { useParams } from "next/navigation"
+import { useParams,useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -32,6 +33,20 @@ export default function SubCategoryPage() {
     const [loading, setLoading] = useState(false);
     const [image, setImage] = useState<File[]>([]);
     const [showCreateForm, setShowCreateForm] = useState(false);
+
+    const { user } = useAppSelector((state) => state.auth);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!user || user.role != "ADMIN") {
+            toast("Unauthorized access!");
+            router.push("/login");
+        }
+    }, [user, router]);
+
+    if (!user || user.role != "ADMIN") {
+        return <div className="text-center py-10">Redirecting...</div>;
+    }
 
     const fetchSubCategories = async () => {
         try {

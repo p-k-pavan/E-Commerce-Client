@@ -16,7 +16,6 @@ import {
 import Link from "next/link";
 import Search from "./search";
 import { logout } from "@/store/slices/authSlice";
-import { useRouter } from "next/navigation";
 import DisplayCartItem from "./DisplayCartItem";
 import CartMobileLink from "./CartMobileLink";
 
@@ -42,9 +41,6 @@ const UserLinks = memo(() => (
   <>
     <NavigationMenuLink asChild>
       <Link href="/dashboard/my-orders" className="block p-2 hover:bg-gray-100 rounded transition-colors">My Orders</Link>
-    </NavigationMenuLink>
-    <NavigationMenuLink asChild>
-      <Link href="/dashboard/save-address" className="block p-2 hover:bg-gray-100 rounded transition-colors">Save Address</Link>
     </NavigationMenuLink>
   </>
 ));
@@ -78,7 +74,6 @@ const MobileMenu = memo(({ isOpen, onClose, user, onLogout, onCartClick }: any) 
             <div className="space-y-2">
               <div className="font-medium text-gray-500 text-sm uppercase tracking-wide">Account</div>
               <Link href="/dashboard/my-orders" onClick={onClose} className="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">My Orders</Link>
-              <Link href="/dashboard/save-address" onClick={onClose} className="block py-2 px-3 text-gray-700 hover:bg-gray-50 rounded-lg">Save Address</Link>
               <button onClick={() => { onLogout(); onClose(); }} className="w-full text-left py-2 px-3 text-red-600 hover:bg-red-50 rounded-lg font-medium">Logout</button>
             </div>
           </>
@@ -170,7 +165,9 @@ export default function Navigation() {
                             <div className="space-y-3 w-full">
                               <div className="pb-2 border-b border-gray-100">
                                 <div className="font-semibold text-gray-900">My Account</div>
-                                <div className="text-sm text-gray-600 mt-1 truncate">{user?.name}</div>
+                                <Link href={"/profile"}>
+                                  <div className="text-sm text-gray-600 mt-1 truncate">{user?.name}</div>
+                                </Link>
                               </div>
                               <AdminLinks user={user} />
                               <UserLinks />

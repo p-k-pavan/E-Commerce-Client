@@ -55,8 +55,8 @@ const ProductCard = memo(({
         },
         withCredentials: true,
       })
-      if(response.data.success == true){
-        toast("Success",{
+      if (response.data.success == true) {
+        toast("Success", {
           description: response.data.message
         })
       }
@@ -132,7 +132,7 @@ const ProductCard = memo(({
               </span>
             )}
           </div>
-          {user?.role == "ADMIM" ? (
+          {user?.role == "ADMIN" ? (
             <button
               onClick={() => handleDelete(product._id)}
               className="text-xs px-3 py-2 rounded transition-all duration-200 

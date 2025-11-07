@@ -1,13 +1,12 @@
-// components/CategoryDetailPage.tsx
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { useParams } from "next/navigation";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import ProductCard, { Product } from "./ProductCard";
 import ProductSkeleton from "./ProductSkeleton";
 import Link from "next/link";
+import Image from "next/image";
 
 interface SubCategory {
   _id: string;
@@ -37,7 +36,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
       setSubCategoriesLoading(true);
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/subCategory/get-subcategory-by-categoryId`,
-        {  categoryId: categoryId },
+        { categoryId: categoryId },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -51,20 +50,16 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
         const subCats = response.data.data || [];
         setSubCategories(subCats);
 
-        // Auto-select first subcategory if available
         if (subCats.length > 0 && !selectedSubCategory) {
           setSelectedSubCategory(subCats[0]._id);
         }
       } else {
         throw new Error(response.data.message || 'Failed to fetch subcategories');
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        'Failed to fetch subcategories. Please try again.';
-
-      toast.error(errorMessage);
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      const msg = axiosError.response?.data?.message || 'Failed to fetch subcategories. Please try again.';
+      toast.error(msg);
     } finally {
       setSubCategoriesLoading(false);
     }
@@ -98,14 +93,12 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
       } else {
         throw new Error(response.data.message || 'Failed to fetch products');
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        'Failed to fetch products. Please try again.';
+    } catch (err: unknown) {
+        const axiosError = err as AxiosError<{ message?: string }>;
+  const msg = axiosError.response?.data?.message || 'Failed to fetch Product. Please try again.';
 
-      setError(errorMessage);
-      toast(errorMessage);
+      setError(msg);
+      toast(msg);
     } finally {
       setLoading(false);
     }
@@ -127,7 +120,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
 
   const handleAddToCart = (product: Product) => {
     toast.success(`${product.name} added to cart`);
-    
+
   };
 
   return (
@@ -169,7 +162,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
                   >
                     {/* Subcategory Image */}
                     <div className="flex-shrink-0 w-12 h-20 bg-gray-100 rounded overflow-hidden">
-                      <img
+                      <Image
                         src={subCategory.image || '/images/placeholder-subcategory.png'}
                         alt={subCategory.name}
                         className="w-full h-full object-cover"
@@ -178,6 +171,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
                             '/images/placeholder-subcategory.png';
                         }}
                       />
+                      
                     </div>
 
                     <div className="flex-1 min-w-0 text-center md:text-left">
@@ -238,10 +232,10 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3">
-              {products.map((product: any) => (
-                <Link key={product.id} href={`/product/${product._id}`}>
+              {products.map((product: Product) => (
+                <Link key={product._id} href={`/product/${product._id}`}>
                   <ProductCard
-                    
+
                     product={product}
                     onAddToCart={handleAddToCart}
                     className="w-full"

@@ -4,8 +4,9 @@ import React, { memo } from "react";
 import AddToCartButton from "./AddToCart";
 import Link from "next/link";
 import { useAppSelector } from "@/store/hooks";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
+import Image from "next/image";
 
 export interface Product {
   _id: string;
@@ -47,7 +48,7 @@ const ProductCard = memo(({
 
   const { user } = useAppSelector((state) => state.auth);
 
-  const handleDelete = async (productId: any) => {
+  const handleDelete = async (productId: string) => {
     try {
       const response = await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/product/${productId}`, {
         headers: {
@@ -60,14 +61,10 @@ const ProductCard = memo(({
           description: response.data.message
         })
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        'Failed to fetch products. Please try again.';
-      toast('Error', {
-        description: errorMessage
-      });
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      const msg = axiosError.response?.data?.message || 'Failed to fetch product. Please try again.';
+      toast(msg);
     }
 
   }
@@ -82,7 +79,7 @@ const ProductCard = memo(({
 
       <div className="relative aspect-square bg-gray-100 rounded-t-lg overflow-hidden group">
         <Link href={`/product/${product._id}`}>
-          <img
+          <Image
             src={product.image[0]}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

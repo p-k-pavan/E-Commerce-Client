@@ -4,7 +4,7 @@ export const isTokenExpired = (token: string): boolean => {
     const decodedPayload = JSON.parse(atob(payloadBase64));
     const currentTime = Math.floor(Date.now() / 1000);
     return decodedPayload.exp < currentTime;
-  } catch (err) {
+  } catch {
     return true;
   }
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppSelector } from "@/store/hooks";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -15,7 +15,7 @@ interface MoreDetails {
 
 interface FormData {
   name: string;
-  image: string[]; // changed to array
+  image: string[];
   category: string[];
   subCategory: string[];
   unit: string;
@@ -25,6 +25,19 @@ interface FormData {
   description: string;
   more_details: MoreDetails;
   publish: string;
+}
+
+interface SubCategory {
+  _id: string;
+  name: string;
+  category: string;
+  image?: string;
+}
+
+interface Category {
+  _id: string;
+  name: string;
+  image?: string;
 }
 
 export default function ProductUploadPage() {
@@ -45,25 +58,22 @@ export default function ProductUploadPage() {
   const [images, setImages] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
-  const router = useRouter();
-  const [categoryData, setCategoryData] = useState<any[]>([]);
-  const [subCategoryData, setSubCategoryData] = useState<any[]>([]);
+  const [categoryData, setCategoryData] = useState<Category[]>([]);
+  const [subCategoryData, setSubCategoryData] = useState<SubCategory[]>([]);
   const [loadingSubCategories, setLoadingSubCategories] = useState(false);
 
   const { user } = useAppSelector((state) => state.auth);
+  const router = useRouter();
 
+  // ✅ Always call hooks before conditionals
   useEffect(() => {
-    if (!user || user.role != "ADMIN") {
+    if (!user || user.role !== "ADMIN") {
       toast("Unauthorized access!");
       router.push("/login");
     }
   }, [user, router]);
 
-  if (!user || user.role != "ADMIN") {
-    return <div className="text-center py-10">Redirecting...</div>;
-  }
-
-  // Fetch categories
+  // ✅ Fetch categories
   const fetchCategories = async () => {
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/category`, {
@@ -71,17 +81,13 @@ export default function ProductUploadPage() {
         withCredentials: true,
       });
       if (response.data.success) setCategoryData(response.data.data);
-    } catch (error: any) {
-      toast.error("Error fetching categories", {
-        description:
-          error?.response?.data?.message ||
-          error?.message ||
-          "Failed to load categories.",
-      });
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      toast.error(axiosError.response?.data?.message || "Failed to fetch categories.");
     }
   };
 
-  // Fetch subcategories
+  // ✅ Fetch subcategories
   const fetchSubCategories = async (categoryId: string) => {
     if (!categoryId) return setSubCategoryData([]);
     setLoadingSubCategories(true);
@@ -95,13 +101,9 @@ export default function ProductUploadPage() {
         }
       );
       if (response.data.success) setSubCategoryData(response.data.data);
-    } catch (error: any) {
-      toast.error("Error fetching subcategories", {
-        description:
-          error?.response?.data?.message ||
-          error?.message ||
-          "Failed to load subcategories.",
-      });
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      toast.error(axiosError.response?.data?.message || "Failed to fetch subcategories.");
       setSubCategoryData([]);
     } finally {
       setLoadingSubCategories(false);
@@ -112,6 +114,12 @@ export default function ProductUploadPage() {
     fetchCategories();
   }, []);
 
+  // ✅ Safe conditional render (AFTER hooks)
+  if (!user || user.role !== "ADMIN") {
+    return <div className="text-center py-10">Redirecting...</div>;
+  }
+
+  // ✅ Handlers
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = e.target.value;
     setFormData((prev) => ({
@@ -136,11 +144,9 @@ export default function ProductUploadPage() {
     }
   };
 
-  // Upload image(s)
   const uploadImage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (images.length === 0)
-      return toast.error("Please select at least one image.");
+    if (images.length === 0) return toast.error("Please select at least one image.");
 
     setUploadingImages(true);
     try {
@@ -163,13 +169,9 @@ export default function ProductUploadPage() {
           image: response.data.data || [],
         }));
       }
-    } catch (error: any) {
-      toast.error("Upload error", {
-        description:
-          error?.response?.data?.message ||
-          error?.message ||
-          "Image upload failed.",
-      });
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      toast.error(axiosError.response?.data?.message || "Image upload failed.");
     } finally {
       setUploadingImages(false);
     }
@@ -182,47 +184,25 @@ export default function ProductUploadPage() {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  // Handle more_details field dynamically (optional)
-  const handleMoreDetailsChange = (key: keyof MoreDetails, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      more_details: {
-        ...prev.more_details,
-        [key]: value,
-      },
-    }));
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!formData.image.length)
-      return toast.error("Please upload at least one image.");
+    if (!formData.image.length) return toast.error("Please upload at least one image.");
 
     setLoading(true);
     try {
       const submitData = {
-        name: formData.name,
-        image: formData.image,
-        category: formData.category,
-        subCategory: formData.subCategory,
-        unit: formData.unit,
+        ...formData,
         stock: parseInt(formData.stock) || 0,
         price: parseFloat(formData.price) || 0,
         discount: parseFloat(formData.discount) || 0,
-        description: formData.description,
-        more_details: formData.more_details,
         publish: formData.publish === "true",
       };
 
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/product`,
-        submitData,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/product`, submitData, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
 
       if (response.data.success) {
         toast.success("Product created successfully");
@@ -242,18 +222,13 @@ export default function ProductUploadPage() {
         });
         setImages([]);
       }
-    } catch (error: any) {
-      toast.error("Submission error", {
-        description:
-          error?.response?.data?.message ||
-          error?.message ||
-          "Failed to create product.",
-      });
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      toast.error(axiosError.response?.data?.message || "Failed to create product.");
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <div className="container mx-auto p-6 max-w-4xl">
       <h1 className="text-3xl font-bold mb-6 text-gray-900">Upload Product</h1>

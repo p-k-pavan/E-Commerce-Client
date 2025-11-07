@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useDispatch } from 'react-redux';
 import {
   setCartItems,
@@ -41,8 +41,9 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
       });
 
       if (res.data?.cart) dispatch(setCartItems(res.data.cart));
-    } catch (err: any) {
-      const msg = err.response?.data?.message || 'Failed to fetch cart items';
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      const msg = axiosError.response?.data?.message || 'Failed to fetch cart item';
       dispatch(setCartError(msg));
     } finally {
       dispatch(setCartLoading(false));
@@ -67,8 +68,9 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
 
       await fetchCartItems();
       return { success: true };
-    } catch (err: any) {
-      const msg = err.response?.data?.message || 'Failed to update cart item';
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      const msg = axiosError.response?.data?.message || 'Failed to update cart item';
       dispatch(setCartError(msg));
       return { success: false };
     } finally {
@@ -90,8 +92,9 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
 
       await fetchCartItems();
       return { success: true };
-    } catch (err: any) {
-      const msg = err.response?.data?.message || 'Failed to delete cart item';
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      const msg = axiosError.response?.data?.message || 'Failed to delete cart item';
       dispatch(setCartError(msg));
       return { success: false };
     } finally {
@@ -99,13 +102,13 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     }
   };
 
-  useEffect(()=>{
-    const qty = cart.reduce((prev,curr)=>{
+  useEffect(() => {
+    const qty = cart.reduce((prev, curr) => {
       return prev + curr.quantity
-    },0)
+    }, 0)
     setTotalQty(qty);
-    
-  },[cart])
+
+  }, [cart])
 
   const value: GlobalContextType = {
     fetchCartItems,

@@ -6,6 +6,14 @@ import { useEffect, useState } from "react";
 import { IoClose } from 'react-icons/io5';
 import AddToCartButton from "./AddToCart";
 import { FaCaretRight } from "react-icons/fa";
+import Image from "next/image";
+
+interface CartItem {
+    productId: {
+        price: number;
+        discount?: number;
+    };
+}
 
 export default function DisplayCartItem({ close }: { close: () => void }) {
     const { cart } = useAppSelector((state) => state.cart);
@@ -40,7 +48,7 @@ export default function DisplayCartItem({ close }: { close: () => void }) {
         setTotalQty(qty);
     }, [cart]);
 
-    const calculateDiscountedPrice = (item: any): number => {
+    const calculateDiscountedPrice = (item: CartItem): number => {
         if (!item.productId.discount) return item.productId.price;
         return item.productId.price - (item.productId.price * item.productId.discount / 100);
     };
@@ -71,7 +79,7 @@ export default function DisplayCartItem({ close }: { close: () => void }) {
                                     >
                                         <div className="flex items-center gap-4 flex-1">
                                             <div className="w-16 h-16 bg-gray-100 border rounded overflow-hidden">
-                                                <img
+                                                <Image
                                                     src={item?.productId?.image[0]}
                                                     alt={item?.productId?.name}
                                                     className="object-contain w-full h-full"
@@ -119,7 +127,7 @@ export default function DisplayCartItem({ close }: { close: () => void }) {
                         </>
                     ) : (
                         <div className="bg-white flex flex-col justify-center items-center p-4">
-                            <img src="/31160.jpg" alt="Empty cart" className="w-60 h-60 object-contain" />
+                            <Image src="/31160.jpg" alt="Empty cart" className="w-60 h-60 object-contain" />
                             <Link onClick={close} href="/" className="bg-green-600 px-4 py-2 text-white rounded mt-3">Shop Now</Link>
                         </div>
                     )}
@@ -128,17 +136,17 @@ export default function DisplayCartItem({ close }: { close: () => void }) {
                 {cart?.length > 0 && (
                     <div className="p-2">
                         <Link href={"/checkout"}>
-                        <div className="bg-green-700 cursor-pointer text-neutral-100 px-4 font-bold text-base py-4 rounded flex items-center justify-between">
-                            <div>₹{totals.afterDiscount.toFixed(2)}</div>
-                            
+                            <div className="bg-green-700 cursor-pointer text-neutral-100 px-4 font-bold text-base py-4 rounded flex items-center justify-between">
+                                <div>₹{totals.afterDiscount.toFixed(2)}</div>
+
 
                                 <button className="flex items-center gap-1 cursor-pointer">
                                     Proceed <FaCaretRight />
                                 </button>
-                        </div>
-                         </Link>
+                            </div>
+                        </Link>
                     </div>
-                   
+
                 )}
             </div>
         </div>

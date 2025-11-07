@@ -1,6 +1,6 @@
 "use client";
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -52,8 +52,10 @@ export default function Page() {
         localStorage.setItem("email", formData.email);
         router.push("/verification-otp");
       }
-    } catch (error: any) {
-      toast(error?.response?.data?.message || error?.message || "An error occurred");
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      const msg = axiosError.response?.data?.message || 'An error occurred.';
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -95,9 +97,8 @@ export default function Page() {
               <button
                 type="submit"
                 disabled={isDisabled}
-                className={`w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-lg text-sm sm:text-base mt-2 ${
-                  isDisabled ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className={`w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-lg text-sm sm:text-base mt-2 ${isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
               >
                 {loading ? "Sending OTP..." : "Send OTP"}
               </button>

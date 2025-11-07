@@ -1,7 +1,8 @@
 "use client"
 import AddToCartButton from "@/components/AddToCart"
 import { useAppSelector } from "@/store/hooks"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
+import Image from "next/image"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -72,9 +73,10 @@ export default function ProductDetail() {
       } else if (response.data.error === true) {
         toast.error("Failed to fetch product details")
       }
-    } catch (error: any) {
-      console.error("Search error:", error)
-      toast.error(error?.response?.data?.message || error?.message || "Failed to load product. Please try again.")
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+            const msg = axiosError.response?.data?.message || 'An error occurred.';
+            toast.error(msg);
     } finally {
       setLoading(false)
     }
@@ -109,7 +111,7 @@ export default function ProductDetail() {
 
 
 
-  const handleDelete = async (productId: any) => {
+  const handleDelete = async (productId: string) => {
     try {
       const response = await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/product/${productId}`, {
         headers: {
@@ -122,14 +124,10 @@ export default function ProductDetail() {
           description: response.data.message
         })
       }
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        'Failed to fetch products. Please try again.';
-      toast('Error', {
-        description: errorMessage
-      });
+    } catch (err: unknown) {
+    const axiosError = err as AxiosError<{ message?: string }>;
+      const msg = axiosError.response?.data?.message || 'An error occurred.';
+      toast.error(msg);
     }
 
   }
@@ -144,7 +142,7 @@ export default function ProductDetail() {
         <div className="space-y-4 lg:sticky lg:top-24">
           {/* Main Image */}
           <div className="aspect-square overflow-hidden rounded-lg border border-border bg-card shadow-sm">
-            <img
+            <Image
               src={data.image[selectedImage] || "/placeholder.svg"}
               alt={data.name}
               width={600}
@@ -166,7 +164,7 @@ export default function ProductDetail() {
                     }`}
                   aria-label={`View image ${index + 1}`}
                 >
-                  <img
+                  <Image
                     src={img || "/placeholder.svg"}
                     alt={`${data.name} ${index + 1}`}
                     width={100}

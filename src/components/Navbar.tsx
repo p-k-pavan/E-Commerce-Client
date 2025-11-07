@@ -20,8 +20,9 @@ import DisplayCartItem from "./DisplayCartItem";
 import CartMobileLink from "./CartMobileLink";
 import axios from "axios";
 import { toast } from "sonner";
+import { AppDispatch } from "@/store";
 
-export const handleLogoutApi = async (dispatch: any) => {
+export const handleLogoutApi = async (dispatch: AppDispatch) => {
   try {
     await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/users/logout`, {
       withCredentials: true,
@@ -33,7 +34,6 @@ export const handleLogoutApi = async (dispatch: any) => {
     toast.success("Logged out successfully!");
   }
 };
-
 
 const AdminLinks = memo(({ user }: { user: any }) => {
   if (user?.role !== "ADMIN") return null;

@@ -2,13 +2,23 @@
 
 import { useEffect, useState } from "react";
 import BannerSlider from "@/components/BannerSlider";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import CategoryWiseProductDisplay from "@/components/CategoryWiseProductDisplay"
 import { useAppSelector } from "@/store/hooks";
 import ProductSkeleton from "@/components/ProductSkeleton";
+import ProductCard, { Product } from "@/components/ProductCard";
+import Image from "next/image";
+
+interface Category {
+    _id: string;
+    name: string;
+    onProductClick?: (product: Product) => void;
+    onAddToCart?: (product: Product) => void;
+    className?: string;
+}
 
 
 export default function Home() {
@@ -35,12 +45,10 @@ export default function Home() {
                 } else if (response.data.error === true) {
                     toast.error(response.data.message || 'Fetch failed!');
                 }
-            } catch (error: any) {
-                toast.error(
-                    error?.response?.data?.message ||
-                    error?.message ||
-                    'Fetch failed. Please try again.'
-                );
+            } catch (err: unknown) {
+                const axiosError = err as AxiosError<{ message?: string }>;
+                const msg = axiosError.response?.data?.message || 'An error occurred.';
+                toast.error(msg);
             }
         };
 
@@ -59,14 +67,14 @@ export default function Home() {
                     Array.from({ length: 10 }).map((_, index) => (
                         <div key={index} className="flex flex-col items-center space-y-2">
                             <Skeleton className="w-32 h-32 rounded-lg" />
-                             <Skeleton className="w-32 h-32 rounded-lg" />
+                            <Skeleton className="w-32 h-32 rounded-lg" />
                         </div>
                     ))
                     :
                     category.map((cat: any) => (
                         <Link key={cat._id} href={`/category/${cat._id}`}>
                             <div className="flex flex-col items-center cursor-pointer">
-                                <img
+                                <Image
                                     src={cat.image || '/placeholder.png'}
                                     alt={cat.name}
                                     className="w-full h-full object-scale-down rounded-lg"
@@ -75,25 +83,25 @@ export default function Home() {
                         </Link>
                     ))}
             </div>
-         {loading ? (
-    Array.from({ length: 5 }).map((_, index) => (
-        <div key={index} className="container mx-auto p-4 flex items-center justify-between gap-4">
-            <ProductSkeleton />
-            <ProductSkeleton />
-            <ProductSkeleton />
-            <ProductSkeleton />
-            <ProductSkeleton />
-        </div>
-    ))
-) : (
-    category.map((cat: any) => (
-        <CategoryWiseProductDisplay
-            key={cat._id}
-            id={cat._id}
-            name={cat.name}
-        />
-    ))
-)}
+            {loading ? (
+                Array.from({ length: 5 }).map((_, index) => (
+                    <div key={index} className="container mx-auto p-4 flex items-center justify-between gap-4">
+                        <ProductSkeleton />
+                        <ProductSkeleton />
+                        <ProductSkeleton />
+                        <ProductSkeleton />
+                        <ProductSkeleton />
+                    </div>
+                ))
+            ) : (
+                category.map((cat: Category) => (
+                    <CategoryWiseProductDisplay
+                        key={cat._id}
+                        id={cat._id}
+                        name={cat.name}
+                    />
+                ))
+            )}
 
         </div>
     );

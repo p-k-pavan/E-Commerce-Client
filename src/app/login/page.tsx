@@ -1,6 +1,6 @@
 "use client"
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -31,8 +31,8 @@ export default function Page() {
 
         try {
             const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/users/login`, 
-                formData, 
+                `${process.env.NEXT_PUBLIC_BASE_URL}/users/login`,
+                formData,
                 {
                     headers: {
                         "Content-Type": "application/json"
@@ -50,7 +50,7 @@ export default function Page() {
             if (response.data.user.success) {
                 const userData = {
                     _id: response.data.user._id || "",
-                    name: response.data.user.name ,
+                    name: response.data.user.name,
                     email: response.data.user.email || formData.email,
                     avatar: response.data.user.avatar || "",
                     mobile: response.data.user.mobile || "",
@@ -72,8 +72,10 @@ export default function Page() {
 
                 router.push("/");
             }
-        } catch (error: any) {
-            toast(error?.response?.data?.message || error?.message || "An error occurred");
+        } catch (err: unknown) {
+            const axiosError = err as AxiosError<{ message?: string }>;
+            const msg = axiosError.response?.data?.message || 'An error occurred.';
+            toast.error(msg);
             dispatch(clearLoading());
         }
     }
@@ -134,9 +136,8 @@ export default function Page() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className={`w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-lg text-sm sm:text-base mt-2 ${
-                                    loading ? 'opacity-50 cursor-not-allowed' : ''
-                                }`}
+                                className={`w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-lg text-sm sm:text-base mt-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''
+                                    }`}
                             >
                                 {loading ? 'Sign In...' : 'Sign In'}
                             </button>

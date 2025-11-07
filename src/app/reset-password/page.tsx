@@ -1,6 +1,6 @@
 "use client";
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -60,10 +60,10 @@ export default function Page() {
         localStorage.removeItem("email"); 
         router.push("/login");
       }
-    } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message || error?.message || "An error occurred"
-      );
+    } catch (err: unknown) {
+       const axiosError = err as AxiosError<{ message?: string }>;
+      const msg = axiosError.response?.data?.message || 'An error occurred.';
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

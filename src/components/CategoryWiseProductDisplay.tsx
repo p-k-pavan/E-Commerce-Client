@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback, useRef, memo } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import Link from "next/link";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
@@ -53,14 +53,11 @@ function CategoryWiseProductDisplay({
             } else {
                 throw new Error(response.data.message || 'Fetch failed');
             }
-        } catch (error: any) {
-            const errorMessage =
-                error?.response?.data?.message ||
-                error?.message ||
-                'Failed to fetch products. Please try again.';
-
-            setError(errorMessage);
-            toast.error(errorMessage);
+        } catch (err: unknown) {
+            const axiosError = err as AxiosError<{ message?: string }>;
+            const msg = axiosError.response?.data?.message || 'Failed to fetch Product. Please try again.';
+            setError(msg);
+            toast.error(msg);
         } finally {
             setLoading(false);
         }
@@ -127,14 +124,14 @@ function CategoryWiseProductDisplay({
                             {error}
                         </div>
                     ) : (
-                        data.map((product: any) => (
-                            
-                                <ProductCard
-                                    key={product._id}
-                                    product={product}
-                                    onAddToCart={handleProductAddToCart}
-                                />
-                            
+                        data.map((product: Product) => (
+
+                            <ProductCard
+                                key={product._id}
+                                product={product}
+                                onAddToCart={handleProductAddToCart}
+                            />
+
                         ))
                     )}
                 </div>

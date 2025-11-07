@@ -1,10 +1,11 @@
 "use client";
 
 import { useAppSelector } from "@/store/hooks";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import Image from "next/image";
 import Link from "next/link";
-import { useParams,useRouter } from "next/navigation"
-import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation"
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface SubCategory {
@@ -20,14 +21,14 @@ interface FormData {
 }
 
 export default function SubCategoryPage() {
-    const params = useParams()
-    const categoryId = params.id as string
+    const params = useParams();
+    const categoryId = params.id as string;
 
     const [subCategoryData, setSubCategoryData] = useState<SubCategory[]>([]);
     const [formData, setFormData] = useState<FormData>({
         name: "",
         image: "",
-        category: categoryId
+        category: categoryId,
     });
     const [uploadingImages, setUploadingImages] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -38,23 +39,18 @@ export default function SubCategoryPage() {
     const router = useRouter();
 
     useEffect(() => {
-        if (!user || user.role != "ADMIN") {
+        if (!user || user.role !== "ADMIN") {
             toast("Unauthorized access!");
             router.push("/login");
         }
     }, [user, router]);
 
-    if (!user || user.role != "ADMIN") {
-        return <div className="text-center py-10">Redirecting...</div>;
-    }
 
-    const fetchSubCategories = async () => {
+    const fetchSubCategories = useCallback(async () => {
         try {
             const response = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/subCategory/get-subcategory-by-categoryId`,
-                {
-                    categoryId: categoryId
-                },
+                { categoryId },
                 {
                     headers: { "Content-Type": "application/json" },
                     withCredentials: true,
@@ -64,20 +60,22 @@ export default function SubCategoryPage() {
             if (response.data.success) {
                 setSubCategoryData(response.data.data);
             }
-        } catch (error: any) {
+        } catch (err: unknown) {
+            const axiosError = err as AxiosError<{ message?: string }>;
             toast("Error fetching categories", {
-                description: error?.response?.data?.message || error?.message || "Failed to load categories.",
+                description:
+                    axiosError.response?.data?.message ||
+                    axiosError.message ||
+                    "Failed to load categories.",
             });
         }
-    };
+    }, [categoryId]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            const filesArray = Array.from(e.target.files);
-            setImage(filesArray);
+            setImage(Array.from(e.target.files));
         }
     };
-
 
     const uploadImage = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -99,17 +97,14 @@ export default function SubCategoryPage() {
         setUploadingImages(true);
         try {
             const uploadFormData = new FormData();
-
-            uploadFormData.append('file', image[0]);
+            uploadFormData.append("file", image[0]);
 
             const response = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/upload/product`,
                 uploadFormData,
                 {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                    withCredentials: true
+                    headers: { "Content-Type": "multipart/form-data" },
+                    withCredentials: true,
                 }
             );
 
@@ -118,10 +113,10 @@ export default function SubCategoryPage() {
                     description: response.data.message,
                 });
 
-                if (response.data.data && response.data.data.length > 0) {
-                    setFormData(prev => ({
+                if (response.data.data?.length > 0) {
+                    setFormData((prev) => ({
                         ...prev,
-                        image: response.data.data[0]
+                        image: response.data.data[0],
                     }));
                 }
             } else {
@@ -129,43 +124,45 @@ export default function SubCategoryPage() {
                     description: response.data.message || "Failed to upload image.",
                 });
             }
-
-        } catch (error: any) {
+        } catch (err: unknown) {
+            const axiosError = err as AxiosError<{ message?: string }>;
             toast.error("Upload error", {
-                description: error?.response?.data?.message || error?.message || "An error occurred during image upload.",
+                description:
+                    axiosError.response?.data?.message ||
+                    axiosError.message ||
+                    "An error occurred during image upload.",
             });
         } finally {
             setUploadingImages(false);
         }
     };
 
-    const handleDeleteSubCategory = async (categoryId: string) => {
-        if (!confirm("Are you sure you want to delete this subCategory?")) {
-            return;
-        }
+    const handleDeleteSubCategory = async (subCategoryId: string) => {
+        if (!confirm("Are you sure you want to delete this subCategory?")) return;
 
         try {
             const response = await axios.delete(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/subCategory/${categoryId}`,
-                {
-                    withCredentials: true,
-                }
+                `${process.env.NEXT_PUBLIC_BASE_URL}/subCategory/${subCategoryId}`,
+                { withCredentials: true }
             );
 
             if (response.data.success) {
-                toast("Category deleted successfully", {
+                toast("SubCategory deleted successfully", {
                     description: response.data.message,
                 });
-                // Refresh Subcategories list
                 fetchSubCategories();
             } else {
-                toast("Failed to delete category", {
+                toast("Failed to delete subCategory", {
                     description: response.data.message || "Unknown error occurred.",
                 });
             }
-        } catch (error: any) {
-            toast("Error deleting category", {
-                description: error?.response?.data?.message || error?.message || "Failed to delete category.",
+        } catch (err: unknown) {
+            const axiosError = err as AxiosError<{ message?: string }>;
+            toast("Error deleting subCategory", {
+                description:
+                    axiosError.response?.data?.message ||
+                    axiosError.message ||
+                    "Failed to delete subCategory.",
             });
         }
     };
@@ -191,31 +188,32 @@ export default function SubCategoryPage() {
                 }
             );
 
-            if (response.data.success === true) {
-                toast.success("Category created successfully", {
-                    description: response.data.message
+            if (response.data.success) {
+                toast.success("SubCategory created successfully", {
+                    description: response.data.message,
                 });
 
-                // Reset form and hide create form
                 setFormData({
                     name: "",
                     image: "",
-                    category: categoryId
+                    category: categoryId,
                 });
                 setImage([]);
                 setShowCreateForm(false);
-
-                // Refresh categories list
                 fetchSubCategories();
-
             } else {
-                toast.error("Failed to create category", {
-                    description: response.data.message || "Unknown error occurred.",
+                toast.error("Failed to create subCategory", {
+                    description:
+                        response.data.message || "Unknown error occurred.",
                 });
             }
-        } catch (error: any) {
-            toast.error("Error creating category", {
-                description: error?.response?.data?.message || error?.message || "Failed to create category.",
+        } catch (err: unknown) {
+            const axiosError = err as AxiosError<{ message?: string }>;
+            toast.error("Error creating subCategory", {
+                description:
+                    axiosError.response?.data?.message ||
+                    axiosError.message ||
+                    "Failed to create subCategory.",
             });
         } finally {
             setLoading(false);
@@ -224,8 +222,11 @@ export default function SubCategoryPage() {
 
     useEffect(() => {
         fetchSubCategories();
-    }, [])
+    }, [fetchSubCategories]);
 
+    if (!user || user.role !== "ADMIN") {
+        return <div className="text-center py-10">Redirecting...</div>;
+    }
 
     return (
         <div className="container mx-auto p-4 lg:p-6">
@@ -348,7 +349,7 @@ export default function SubCategoryPage() {
                                 <Link href={`/dashboard/category/${categoryId}/subCategory/${category._id}`}>
                                     <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden group">
                                         {category.image ? (
-                                            <img
+                                            <Image
                                                 src={category.image}
                                                 alt={category.name}
                                                 className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"

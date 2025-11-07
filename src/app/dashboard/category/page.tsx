@@ -1,7 +1,8 @@
 'use client'
 
 import { useAppSelector } from "@/store/hooks";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -22,10 +23,7 @@ interface Category {
 
 export default function CategoryPage() {
     const [categoryData, setCategoryData] = useState<Category[]>([]);
-    const [formData, setFormData] = useState<FormData>({
-        name: "",
-        image: ""
-    });
+    const [formData, setFormData] = useState<FormData>({ name: "", image: "" });
     const [uploadingImages, setUploadingImages] = useState(false);
     const [loading, setLoading] = useState(false);
     const [image, setImage] = useState<File[]>([]);
@@ -34,17 +32,12 @@ export default function CategoryPage() {
     const { user } = useAppSelector((state) => state.auth);
     const router = useRouter();
 
-
     useEffect(() => {
-        if (!user || user.role != "ADMIN") {
+        if (!user || user.role !== "ADMIN") {
             toast("Unauthorized access!");
             router.push("/login");
         }
     }, [user, router]);
-
-    if (!user || user.role != "ADMIN") {
-        return <div className="text-center py-10">Redirecting...</div>;
-    }
 
     const fetchCategories = async () => {
         try {
@@ -59,9 +52,13 @@ export default function CategoryPage() {
             if (response.data.success) {
                 setCategoryData(response.data.data);
             }
-        } catch (error: any) {
+        } catch (err: unknown) {
+            const axiosError = err as AxiosError<{ message?: string }>;
             toast("Error fetching categories", {
-                description: error?.response?.data?.message || error?.message || "Failed to load categories.",
+                description:
+                    axiosError.response?.data?.message ||
+                    axiosError.message ||
+                    "Failed to load categories.",
             });
         }
     };
@@ -93,8 +90,7 @@ export default function CategoryPage() {
         setUploadingImages(true);
         try {
             const uploadFormData = new FormData();
-
-            uploadFormData.append('file', image[0]);
+            uploadFormData.append("file", image[0]);
 
             const response = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/upload/product`,
@@ -103,7 +99,7 @@ export default function CategoryPage() {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
-                    withCredentials: true
+                    withCredentials: true,
                 }
             );
 
@@ -113,20 +109,24 @@ export default function CategoryPage() {
                 });
 
                 if (response.data.data && response.data.data.length > 0) {
-                    setFormData(prev => ({
+                    setFormData((prev) => ({
                         ...prev,
-                        image: response.data.data[0]
+                        image: response.data.data[0],
                     }));
                 }
             } else {
                 toast.error("Upload failed", {
-                    description: response.data.message || "Failed to upload image.",
+                    description:
+                        response.data.message || "Failed to upload image.",
                 });
             }
-
-        } catch (error: any) {
+        } catch (err: unknown) {
+            const axiosError = err as AxiosError<{ message?: string }>;
             toast.error("Upload error", {
-                description: error?.response?.data?.message || error?.message || "An error occurred during image upload.",
+                description:
+                    axiosError.response?.data?.message ||
+                    axiosError.message ||
+                    "An error occurred during image upload.",
             });
         } finally {
             setUploadingImages(false);
@@ -156,28 +156,26 @@ export default function CategoryPage() {
 
             if (response.data.success === true) {
                 toast.success("Category created successfully", {
-                    description: response.data.message
+                    description: response.data.message,
                 });
 
-                // Reset form and hide create form
-                setFormData({
-                    name: "",
-                    image: ""
-                });
+                setFormData({ name: "", image: "" });
                 setImage([]);
                 setShowCreateForm(false);
 
-                // Refresh categories list
                 fetchCategories();
-
             } else {
                 toast.error("Failed to create category", {
                     description: response.data.message || "Unknown error occurred.",
                 });
             }
-        } catch (error: any) {
+        } catch (err: unknown) {
+            const axiosError = err as AxiosError<{ message?: string }>;
             toast.error("Error creating category", {
-                description: error?.response?.data?.message || error?.message || "Failed to create category.",
+                description:
+                    axiosError.response?.data?.message ||
+                    axiosError.message ||
+                    "Failed to create category.",
             });
         } finally {
             setLoading(false);
@@ -201,16 +199,20 @@ export default function CategoryPage() {
                 toast("Category deleted successfully", {
                     description: response.data.message,
                 });
-                // Refresh categories list
                 fetchCategories();
             } else {
                 toast("Failed to delete category", {
-                    description: response.data.message || "Unknown error occurred.",
+                    description:
+                        response.data.message || "Unknown error occurred.",
                 });
             }
-        } catch (error: any) {
+        } catch (err: unknown) {
+            const axiosError = err as AxiosError<{ message?: string }>;
             toast("Error deleting category", {
-                description: error?.response?.data?.message || error?.message || "Failed to delete category.",
+                description:
+                    axiosError.response?.data?.message ||
+                    axiosError.message ||
+                    "Failed to delete category.",
             });
         }
     };
@@ -218,6 +220,11 @@ export default function CategoryPage() {
     useEffect(() => {
         fetchCategories();
     }, []);
+
+    if (!user || user.role !== "ADMIN") {
+        return <div className="text-center py-10">Redirecting...</div>;
+    }
+
 
     return (
         <div className="container mx-auto p-4 lg:p-6">
@@ -340,7 +347,7 @@ export default function CategoryPage() {
                                 <Link href={`/dashboard/category/${category._id}`}>
                                     <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden group">
                                         {category.image ? (
-                                            <img
+                                            <Image
                                                 src={category.image}
                                                 alt={category.name}
                                                 className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 export default function BannerSlider() {
@@ -8,6 +9,7 @@ export default function BannerSlider() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+   const images = isMobile ? mobileImages : desktopImages;
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -27,12 +29,12 @@ export default function BannerSlider() {
     return () => clearInterval(interval);
   }, [isMobile]);
 
-  const images = isMobile ? mobileImages : desktopImages;
+ 
 
   return (
     <div className="container mx-auto ">
       <div className="w-full mx-auto h-64 max-h-48 bg-blue-100 overflow-hidden rounded">
-        <img
+        <Image
           src={images[currentIndex]}
           className="w-full h-full object-cover"
           alt="banner"

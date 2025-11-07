@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { FaMinus, FaPlus } from 'react-icons/fa6';
 import { useAppSelector } from '@/store/hooks';
@@ -66,8 +66,10 @@ export default function AddToCartButton({ data , className}: AddToCartButtonProp
       } else {
         toast.error(res.data.message || 'Failed to add item');
       }
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Something went wrong');
+    } catch (err: unknown) {
+       const axiosError = err as AxiosError<{ message?: string }>;
+      const msg = axiosError.response?.data?.message || 'Something went wrong.';
+      toast.error(msg);
     } finally {
       setBtnLoading(false);
     }

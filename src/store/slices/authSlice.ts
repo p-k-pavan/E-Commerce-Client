@@ -9,9 +9,9 @@ interface User {
   verify_email: boolean;
   last_login_date: string;
   status: string;
-  address_details: any[];
-  shopping_cart: any[];
-  orderHistory: any[];
+  address_details: string[];
+  shopping_cart: string[];
+  orderHistory: string[];
   role: string;
 }
 

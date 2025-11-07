@@ -2,21 +2,15 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { toast } from "sonner";
 import Link from "next/link";
-import ProductCard from "@/components/ProductCard";
+import ProductCard, { Product } from "@/components/ProductCard";
 import ProductSkeleton from "@/components/ProductSkeleton";
+import Image from "next/image";
 
-interface Product {
-  _id: string;
-  name: string;
-  image?: string;
-  price?: number;
-  originalPrice?: number;
-  discount?: number;
-}
+
 
 interface SearchResponse {
   success: boolean;
@@ -70,13 +64,10 @@ const SearchPage = () => {
           setTotalPage(responseData.totalPage || 1);
           setHasMore(currentPage < (responseData.totalPage || 1));
         }
-      } catch (error: any) {
-        console.error("Search error:", error);
-        toast.error(
-          error?.response?.data?.message ||
-            error?.message ||
-            "Search failed. Please try again."
-        );
+      } catch (err: unknown) {
+        const axiosError = err as AxiosError<{ message?: string }>;
+        const msg = axiosError.response?.data?.message || 'Search failed. Please try again.';
+        toast.error(msg);
       } finally {
         setLoading(false);
       }
@@ -138,7 +129,7 @@ const SearchPage = () => {
             }
           >
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 py-4 gap-3 sm:gap-4">
-              {data.map((p:any) => (
+              {data.map((p: Product) => (
                 <Link key={p._id} href={`/product/${p._id}`}>
                   <ProductCard product={p} className="w-full h-full" />
                 </Link>
@@ -149,7 +140,7 @@ const SearchPage = () => {
 
         {!data.length && !loading && (
           <div className="flex flex-col justify-center items-center w-full mx-auto mt-12 text-center">
-            <img
+            <Image
               src="https://media0.giphy.com/media/IwSG1QKOwDjQk/giphy.gif"
               alt="No data found"
               className="w-48 h-48 sm:w-60 sm:h-60 object-contain opacity-80"

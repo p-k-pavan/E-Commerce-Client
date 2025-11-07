@@ -1,31 +1,33 @@
-"use client"
+"use client";
 
-import { useAppSelector } from "@/store/hooks"
-import axios from "axios"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import { toast } from "sonner"
+import { useAppSelector } from "@/store/hooks";
+import axios, { AxiosError } from "axios";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface Orders {
-  _id?: string
+  _id?: string;
   product_details: {
-    name: string
-    image: string[]
-  }
-  quantity: number
-  payment_status: string
-  subTotalAmt: number
-  totalAmt: number
-  createdAt: string
+    name: string;
+    image: string[];
+  };
+  quantity: number;
+  payment_status: string;
+  subTotalAmt: number;
+  totalAmt: number;
+  createdAt: string;
 }
 
 export default function Page() {
-  const [myOrders, setMyOrders] = useState<Orders[]>([])
-  const [loading, setLoading] = useState(true)
+  const [myOrders, setMyOrders] = useState<Orders[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const { user } = useAppSelector((state) => state.auth);
   const router = useRouter();
 
+  // ✅ Always define hooks before conditional returns
   useEffect(() => {
     if (!user) {
       toast("Unauthorized access!");
@@ -33,48 +35,45 @@ export default function Page() {
     }
   }, [user, router]);
 
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/order`, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+      if (response.data.success === true) {
+        setMyOrders(response.data.data);
+      } else {
+        toast("Failed to fetch orders");
+      }
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      const msg = axiosError.response?.data?.message || "An error occurred.";
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Always call hooks before any conditional rendering
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  // ✅ Now conditionally render
   if (!user) {
     return <div className="text-center py-10">Redirecting...</div>;
   }
 
-  // ✅ Fetch user orders
-  const fetchOrders = async () => {
-    try {
-      setLoading(true)
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/order`, {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true
-      })
-      if (response.data.success === true) {
-        setMyOrders(response.data.data)
-      } else {
-        toast("Failed to fetch orders")
-      }
-    } catch (error: any) {
-      toast("Error", {
-        description:
-          error?.response?.data?.message || error?.message || "An error occurred while fetching orders",
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // Fetch orders on mount
-  useEffect(() => {
-    fetchOrders()
-  }, [])
-
-  // ✅ Loading state
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
       </div>
-    )
+    );
   }
 
-  // ✅ Empty state
   if (myOrders.length === 0) {
     return (
       <div className="flex justify-center items-center min-h-[60vh] text-center">
@@ -83,7 +82,7 @@ export default function Page() {
           <p className="text-gray-500 mt-2">You haven’t placed any orders yet.</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -99,16 +98,20 @@ export default function Page() {
             <div className="flex flex-col sm:flex-row gap-4">
               {/* Product Image */}
               <div className="w-full sm:w-32 h-32 border rounded overflow-hidden flex-shrink-0">
-                <img
+                <Image
                   src={order.product_details?.image?.[0] || "/placeholder.svg"}
                   alt={order.product_details?.name || "Product"}
                   className="w-full h-full object-cover"
+                  width={128}
+                  height={128}
                 />
               </div>
 
               {/* Product Details */}
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-800">{order.product_details?.name}</h3>
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {order.product_details?.name}
+                </h3>
 
                 <p className="text-gray-600 mt-1">
                   Quantity: <span className="font-medium">{order.quantity}</span>
@@ -123,7 +126,10 @@ export default function Page() {
                 </p>
 
                 <p className="text-gray-600 mt-1">
-                  Total: ₹<span className="font-medium text-green-600">{order.totalAmt.toFixed(2)}</span>
+                  Total: ₹
+                  <span className="font-medium text-green-600">
+                    {order.totalAmt.toFixed(2)}
+                  </span>
                 </p>
 
                 <p className="text-gray-500 text-sm mt-2">
@@ -142,5 +148,5 @@ export default function Page() {
         ))}
       </div>
     </div>
-  )
+  );
 }

@@ -1,12 +1,13 @@
 'use client'
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useState, useEffect, useRef } from "react"
 import { toast } from "sonner";
 import { FiUser, FiMail, FiPhone, FiCamera, FiSave, FiEdit, FiX } from "react-icons/fi";
 import { TbUserEdit } from "react-icons/tb";
 import { setCredentials, setLoading, clearLoading } from "@/store/slices/authSlice";
+import Image from "next/image";
 
 interface FormData {
     name: string;
@@ -115,10 +116,10 @@ export default function ProfilePage() {
                 });
             }
 
-        } catch (error: any) {
-            toast.error("Upload error", {
-                description: error?.response?.data?.message || error?.message || "An error occurred during image upload.",
-            });
+        } catch (err: unknown) {
+            const axiosError = err as AxiosError<{ message?: string }>;
+            const msg = axiosError.response?.data?.message || 'An error occurred.';
+            toast.error(msg);
         } finally {
             setUploadingImages(false);
         }
@@ -177,8 +178,10 @@ export default function ProfilePage() {
                 });
             }
 
-        } catch (error: any) {
-
+        } catch (err: unknown) {
+            const axiosError = err as AxiosError<{ message?: string }>;
+            const msg = axiosError.response?.data?.message || 'An error occurred.';
+            toast.error(msg);
         } finally {
             setLoading(false);
         }
@@ -223,7 +226,7 @@ export default function ProfilePage() {
                                 <div className="relative inline-block mb-4">
                                     <div className="w-32 h-32 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-white text-4xl font-bold relative overflow-hidden">
                                         {formData.avatar ? (
-                                            <img
+                                            <Image
                                                 src={formData.avatar}
                                                 alt="Profile"
                                                 className="w-full h-full object-cover"

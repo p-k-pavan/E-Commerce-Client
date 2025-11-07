@@ -1,6 +1,6 @@
 "use client";
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -58,8 +58,10 @@ export default function Page() {
         toast("OTP verified successfully!");
         router.push("/reset-password");
       }
-    } catch (error: any) {
-      toast(error?.response?.data?.message || error?.message || "An error occurred");
+    } catch (err: unknown) {
+       const axiosError = err as AxiosError<{ message?: string }>;
+      const msg = axiosError.response?.data?.message || 'An error occurred.';
+      toast(msg);
     } finally {
       setLoading(false);
     }

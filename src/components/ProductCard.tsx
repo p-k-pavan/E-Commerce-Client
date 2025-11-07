@@ -79,7 +79,7 @@ const ProductCard = memo(({
 
       <div className="relative aspect-square bg-gray-100 rounded-t-lg overflow-hidden group">
         <Link href={`/product/${product._id}`}>
-          <Image
+          <img
             src={product.image[0]}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

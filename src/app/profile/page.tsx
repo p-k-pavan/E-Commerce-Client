@@ -229,6 +229,7 @@ export default function ProfilePage() {
                                             <Image
                                                 src={formData.avatar}
                                                 alt="Profile"
+                                                fill
                                                 className="w-full h-full object-cover"
                                             />
                                         ) : (

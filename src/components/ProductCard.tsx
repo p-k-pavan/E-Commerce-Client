@@ -79,9 +79,10 @@ const ProductCard = memo(({
 
       <div className="relative aspect-square bg-gray-100 rounded-t-lg overflow-hidden group">
         <Link href={`/product/${product._id}`}>
-          <img
+          <Image
             src={product.image[0]}
             alt={product.name}
+            fill
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             loading="lazy"
             onError={(e) => {

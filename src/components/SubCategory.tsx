@@ -165,6 +165,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
                       <Image
                         src={subCategory.image || '/images/placeholder-subcategory.png'}
                         alt={subCategory.name}
+                        fill
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src =

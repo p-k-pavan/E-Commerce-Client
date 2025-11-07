@@ -74,12 +74,16 @@ export default function Home() {
                     category.map((cat: any) => (
                         <Link key={cat._id} href={`/category/${cat._id}`}>
                             <div className="flex flex-col items-center cursor-pointer">
-                                <Image
-                                    src={cat.image || '/placeholder.png'}
-                                    alt={cat.name}
-                                    className="w-full h-full object-scale-down rounded-lg"
-                                />
+                                <div className="relative w-24 h-24 sm:w-32 sm:h-32 lg:w-48 lg:h-48">
+                                    <Image
+                                        src={cat.image || '/placeholder.png'}
+                                        alt={cat.name}
+                                        fill
+                                        className="object-contain rounded-lg"
+                                    />
+                                </div>
                             </div>
+
                         </Link>
                     ))}
             </div>

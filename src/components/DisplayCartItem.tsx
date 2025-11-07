@@ -82,6 +82,7 @@ export default function DisplayCartItem({ close }: { close: () => void }) {
                                                 <Image
                                                     src={item?.productId?.image[0]}
                                                     alt={item?.productId?.name}
+                                                    fill
                                                     className="object-contain w-full h-full"
                                                 />
                                             </div>
@@ -127,7 +128,7 @@ export default function DisplayCartItem({ close }: { close: () => void }) {
                         </>
                     ) : (
                         <div className="bg-white flex flex-col justify-center items-center p-4">
-                            <Image src="/31160.jpg" alt="Empty cart" className="w-60 h-60 object-contain" />
+                            <Image src="/31160.jpg" alt="Empty cart" fill className="w-60 h-60 object-contain" />
                             <Link onClick={close} href="/" className="bg-green-600 px-4 py-2 text-white rounded mt-3">Shop Now</Link>
                         </div>
                     )}

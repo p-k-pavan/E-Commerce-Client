@@ -352,6 +352,7 @@ export default function SubCategoryPage() {
                                             <Image
                                                 src={category.image}
                                                 alt={category.name}
+                                                fill
                                                 className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
                                             />
                                         ) : (

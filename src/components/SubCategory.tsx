@@ -94,8 +94,8 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
         throw new Error(response.data.message || 'Failed to fetch products');
       }
     } catch (err: unknown) {
-        const axiosError = err as AxiosError<{ message?: string }>;
-  const msg = axiosError.response?.data?.message || 'Failed to fetch Product. Please try again.';
+      const axiosError = err as AxiosError<{ message?: string }>;
+      const msg = axiosError.response?.data?.message || 'Failed to fetch Product. Please try again.';
 
       setError(msg);
       toast(msg);
@@ -162,9 +162,9 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
                   >
                     {/* Subcategory Image */}
                     <div
-  className={`flex-shrink-0 w-12 h-16 md:w-16 md:h-24 rounded overflow-hidden 
+                      className={`flex-shrink-0 w-12 h-16 md:w-16 md:h-24 rounded overflow-hidden 
     ${selectedSubCategory === subCategory._id ? 'bg-green-50' : 'bg-gray-100 hover:bg-white'}`}
->
+                    >
                       <img
                         src={subCategory.image || '/images/placeholder-subcategory.png'}
                         alt={subCategory.name}
@@ -174,7 +174,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
                             '/images/placeholder-subcategory.png';
                         }}
                       />
-                      
+
                     </div>
 
                     <div className="flex-1 min-w-0 text-center md:text-left">

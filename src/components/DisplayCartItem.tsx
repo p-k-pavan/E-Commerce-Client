@@ -78,14 +78,16 @@ export default function DisplayCartItem({ close }: { close: () => void }) {
                                         className="flex w-full items-center justify-between gap-4"
                                     >
                                         <div className="flex items-center gap-4 flex-1">
-                                            <div className="w-16 h-16 bg-gray-100 border rounded overflow-hidden">
+                                            <div className="w-16 h-16 bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center">
                                                 <Image
                                                     src={item?.productId?.image[0]}
                                                     alt={item?.productId?.name}
-                                                    fill
-                                                    className="object-contain w-full h-full"
+                                                    width={64}
+                                                    height={64}
+                                                    className="object-contain w-full h-full transform hover:scale-110 transition-transform duration-300 ease-in-out"
                                                 />
                                             </div>
+
 
                                             <div className="text-xs">
                                                 <p className="line-clamp-2">{item?.productId?.name}</p>
@@ -141,7 +143,7 @@ export default function DisplayCartItem({ close }: { close: () => void }) {
                                 <div>₹{totals.afterDiscount.toFixed(2)}</div>
 
 
-                                <button className="flex items-center gap-1 cursor-pointer">
+                                <button className="flex items-center gap-1 cursor-pointer" onClick={close}>
                                     Proceed <FaCaretRight />
                                 </button>
                             </div>

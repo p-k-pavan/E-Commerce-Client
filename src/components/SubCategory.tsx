@@ -155,13 +155,16 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
                   <button
                     key={subCategory._id}
                     onClick={() => handleSubCategorySelect(subCategory._id)}
-                    className={`w-full p-2 rounded transition-all duration-200 bg-gray-100 cursor-pointer flex flex-col items-center md:flex-row md:space-y-0 md:space-x-2 md:items-center group ${selectedSubCategory === subCategory._id
+                    className={`w-full rounded transition-all duration-200 bg-gray-100 cursor-pointer flex flex-col items-center md:flex-row md:space-y-0 md:space-x-2 md:items-center group ${selectedSubCategory === subCategory._id
                       ? 'bg-green-50 text-green-700 border border-green-300 font-medium'
                       : 'text-gray-700 hover:bg-white hover:text-gray-900 border border-transparent'
                       }`}
                   >
                     {/* Subcategory Image */}
-                    <div className="flex-shrink-0 w-12 h-16 bg-gray-100 rounded overflow-hidden ">
+                    <div
+  className={`flex-shrink-0 w-12 h-16 md:w-16 md:h-24 rounded overflow-hidden 
+    ${selectedSubCategory === subCategory._id ? 'bg-green-50' : 'bg-gray-100 hover:bg-white'}`}
+>
                       <img
                         src={subCategory.image || '/images/placeholder-subcategory.png'}
                         alt={subCategory.name}

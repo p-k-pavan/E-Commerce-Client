@@ -129,7 +129,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
         <div className="w-1/4 md:w-1/4 lg:w-1/5">
           <div className="sticky top-24 bg-white rounded-lg shadow-sm border border-gray-200 p-3 max-h-[85vh] flex flex-col">
             {subCategoriesLoading ? (
-              <div className="space-y-3 overflow-y-auto">
+              <div className="space-y-3 overflow-y-auto flex-1 hide-scrollbar scroll-smooth md:overflow-y-auto">
                 {Array.from({ length: 5 }).map((_, index) => (
                   <div
                     key={index}
@@ -150,23 +150,22 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
                 <p className="text-gray-500 text-xs">No categories</p>
               </div>
             ) : (
-              <div className="overflow-y-auto flex-1 space-y-2">
+              <div className="overflow-y-auto flex-1 space-y-2 hide-scrollbar scroll-smooth md:overflow-y-auto">
                 {subCategories.map((subCategory) => (
                   <button
                     key={subCategory._id}
                     onClick={() => handleSubCategorySelect(subCategory._id)}
-                    className={`w-full p-2 rounded transition-all duration-200 cursor-pointer flex flex-col items-center md:flex-row md:space-y-0 md:space-x-2 md:items-center group ${selectedSubCategory === subCategory._id
+                    className={`w-full p-2 rounded transition-all duration-200 bg-gray-100 cursor-pointer flex flex-col items-center md:flex-row md:space-y-0 md:space-x-2 md:items-center group ${selectedSubCategory === subCategory._id
                       ? 'bg-green-50 text-green-700 border border-green-300 font-medium'
-                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900 border border-transparent'
+                      : 'text-gray-700 hover:bg-white hover:text-gray-900 border border-transparent'
                       }`}
                   >
                     {/* Subcategory Image */}
-                    <div className="flex-shrink-0 w-12 h-20 bg-gray-100 rounded overflow-hidden">
-                      <Image
+                    <div className="flex-shrink-0 w-12 h-16 bg-gray-100 rounded overflow-hidden ">
+                      <img
                         src={subCategory.image || '/images/placeholder-subcategory.png'}
                         alt={subCategory.name}
-                        fill
-                        className="w-full h-full object-cover"
+                        className="w-full h-full mt-2"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src =
                             '/images/placeholder-subcategory.png';

@@ -19,7 +19,7 @@ interface Address {
 }
 
 export default function Page() {
-  
+
   const { user } = useAppSelector((state) => state.auth);
   const { cart } = useAppSelector((state) => state.cart);
   const { fetchCartItems } = useGlobalContext();
@@ -44,7 +44,7 @@ export default function Page() {
     totalDiscount: 0,
   });
 
-  
+
   useEffect(() => {
     if (!user) {
       toast("Unauthorized access!");
@@ -174,16 +174,124 @@ export default function Page() {
     }
   };
 
-  const handleOnlinePayment = async () => {
-    toast.info("Online payment feature coming soon");
-  };
+ const handleOnlinePayment = async () => {
+  if (selectedAddressIndex === null) {
+    toast.error("Please select an address before placing the order");
+    return;
+  }
 
+  if (!(window as any).Razorpay) {
+    toast.error("Payment service is loading. Please try again in a moment.");
+    return;
+  }
+
+  try {
+    // Step 1: Create Razorpay order
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/order/online-payment`,
+      {
+        list_items: cart,
+        addressId: address[selectedAddressIndex]?._id,
+        subTotalAmt: totals.afterDiscount,
+        totalAmt: totals.afterDiscount,
+      },
+      {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      }
+    );
+
+    if (response.data.success === true) {
+      const { razorpayOrder, orderData } = response.data;
+
+      const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+
+      if (!razorpayKey) {
+        toast.error("Payment configuration error. Please contact support.");
+        return;
+      }
+
+      // Step 2: Open Razorpay checkout
+      const options = {
+        key: razorpayKey,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: "NammaMart",
+        description: "Order Payment",
+        order_id: razorpayOrder.id,
+        handler: async function (paymentResponse: any) {
+          console.log("Payment successful response:", paymentResponse);
+          
+          // Step 3: Verify payment on successful payment
+          try {
+            const verifyResponse = await axios.post(
+              `${process.env.NEXT_PUBLIC_BASE_URL}/order/verify-payment`,
+              {
+                razorpay_order_id: paymentResponse.razorpay_order_id,
+                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                razorpay_signature: paymentResponse.razorpay_signature,
+                orderData: orderData,
+              },
+              {
+                headers: { "Content-Type": "application/json" },
+                withCredentials: true,
+              }
+            );
+
+            if (verifyResponse.data.success) {
+              toast.success("Payment successful! Order placed.");
+              await fetchCartItems();
+              router.push("/");
+            } else {
+              toast.error("Payment verification failed");
+            }
+          } catch (error) {
+            toast.error("Payment verification failed");
+          }
+        },
+        prefill: {
+          name: user?.name || "",
+          email: user?.email || "",
+          contact: user?.mobile || "",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+        modal: {
+          ondismiss: function() {
+            toast.info("Payment cancelled");
+          }
+        }
+      };
+
+      try {
+        const razorpay = new (window as any).Razorpay(options);
+        
+        razorpay.on("payment.failed", function (response: any) {
+          toast.error(`Payment failed: ${response.error.description || "Please try again"}`);
+        });
+
+        razorpay.open();
+        
+      } catch (razorpayError) {
+        toast.error("Failed to initialize payment. Please try again.");
+      }
+
+    }
+  } catch (err: unknown) {
+    const axiosError = err as AxiosError<{ message?: string }>;
+    const msg = axiosError.response?.data?.message || "Order failed.";
+    toast.error(msg);
+  }
+};
 
   if (!user) {
     return <div className="text-center py-10">Redirecting...</div>;
   }
 
-  
+  console.log(process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID)
+
+
   return (
     <div className="bg-blue-50 min-h-screen">
       <div className="container mx-auto p-4 flex flex-col lg:flex-row w-full gap-5 justify-between">
@@ -196,11 +304,10 @@ export default function Page() {
                 <div
                   key={add._id}
                   onClick={() => setSelectedAddressIndex(index)}
-                  className={`p-3 border rounded cursor-pointer ${
-                    selectedAddressIndex === index
+                  className={`p-3 border rounded cursor-pointer ${selectedAddressIndex === index
                       ? "border-green-600 bg-green-50"
                       : "border-gray-200"
-                  }`}
+                    }`}
                 >
                   <p>{add.street}</p>
                   <p>

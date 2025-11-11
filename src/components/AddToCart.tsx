@@ -22,8 +22,7 @@ interface AddToCartButtonProps {
   className?: string; 
 }
 
-
-export default function AddToCartButton({ data , className}: AddToCartButtonProps) {
+export default function AddToCartButton({ data, className = "" }: AddToCartButtonProps) {
   const { fetchCartItems, updateCartItem, deleteCartItem } = useGlobalContext();
   const { cart, loading: cartLoading } = useAppSelector((state) => state.cart);
 
@@ -46,7 +45,6 @@ export default function AddToCartButton({ data , className}: AddToCartButtonProp
     }
   }, [cart, data._id]);
 
-  
   const handleAddToCart = async () => {
     try {
       setBtnLoading(true);
@@ -67,7 +65,7 @@ export default function AddToCartButton({ data , className}: AddToCartButtonProp
         toast.error(res.data.message || 'Failed to add item');
       }
     } catch (err: unknown) {
-       const axiosError = err as AxiosError<{ message?: string }>;
+      const axiosError = err as AxiosError<{ message?: string }>;
       const msg = axiosError.response?.data?.message || 'Something went wrong.';
       toast.error(msg);
     } finally {
@@ -108,36 +106,43 @@ export default function AddToCartButton({ data , className}: AddToCartButtonProp
   };
 
   return (
-    <div className={`w-full max-w-[70px] ${className}`}>
+    <div className={`${className}`}>
       {isInCart ? (
-        <div className="flex w-full h-full items-center justify-between border rounded-md bg-green-600 text-white overflow-hidden">
+        <div className="flex items-center justify-between border-2 border-emerald-500 rounded-lg bg-emerald-500 text-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 min-w-[120px]">
           <button
             onClick={handleDecrease}
             disabled={btnLoading || cartLoading}
-            className="flex-1 py-1 cursor-pointer  flex items-center justify-center"
+            className="py-2 px-3 cursor-pointer flex items-center justify-center hover:bg-emerald-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <FaMinus />
+            <FaMinus className="w-3 h-3" />
           </button>
 
-          <span className="flex-1 text-center font-semibold bg-white text-green-700 py-1">
+          <span className="px-2 text-center font-semibold bg-white text-emerald-700 py-2 text-sm min-w-[30px]">
             {qty}
           </span>
 
           <button
             onClick={handleIncrease}
             disabled={btnLoading || cartLoading}
-            className="flex-1 py-1 cursor-pointer  flex items-center justify-center"
+            className="py-2 px-3 cursor-pointer flex items-center justify-center hover:bg-emerald-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <FaPlus />
+            <FaPlus className="w-3 h-3" />
           </button>
         </div>
       ) : (
         <button
           onClick={handleAddToCart}
           disabled={btnLoading || cartLoading}
-          className={`w-full py-1 cursor-pointer bg-green-600  text-white rounded-md text-sm font-medium transition ${className}`}
+          className={`py-2 px-4 cursor-pointer bg-emerald-500 text-white rounded-lg font-medium hover:bg-emerald-600 transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-sm ${className}`}
         >
-          {btnLoading ? 'Adding…' : 'Add'}
+          {btnLoading ? (
+            <span className="flex items-center justify-center gap-3">
+              <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              Add
+            </span>
+          ) : (
+            'Add'
+          )}
         </button>
       )}
     </div>

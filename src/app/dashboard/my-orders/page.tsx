@@ -152,7 +152,10 @@ export default function Page() {
             <Package className="w-12 h-12 text-gray-400" />
           </div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">No Orders Yet</h2>
-          <p className="text-gray-600 mb-6">You haven{`&#39`}t placed any orders. Start shopping to see your orders here!</p>
+          <p className="text-gray-600 mb-6">
+            You haven&apos;t placed any orders. Start shopping to see your orders here!
+          </p>
+
           <button
             onClick={() => router.push("/")}
             className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium"

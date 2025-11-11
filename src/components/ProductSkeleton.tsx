@@ -16,7 +16,7 @@ const ProductSkeleton = memo(({
       {Array.from({ length: count }).map((_, index) => (
         <div 
           key={index}
-          className={`flex-shrink-0 w-48 md:w-56 lg:w-64 animate-pulse ${className}`}
+          className={`flex-shrink-0 w-36 md:w-42 lg:w-64 animate-pulse ${className}`}
         >
           <div className="aspect-square bg-gray-200 rounded-t-lg"></div>
           <div className="p-3 space-y-2">

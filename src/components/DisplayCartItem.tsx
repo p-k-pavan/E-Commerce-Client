@@ -130,7 +130,7 @@ export default function DisplayCartItem({ close }: { close: () => void }) {
                         </>
                     ) : (
                         <div className="bg-white flex flex-col justify-center items-center p-4">
-                            <Image src="/31160.jpg" alt="Empty cart" fill className="w-60 h-60 object-contain" />
+                            <Image src="/31160.jpg" alt="Empty cart" width={60} height={60} className="w-60 h-60 object-contain" />
                             <Link onClick={close} href="/" className="bg-green-600 px-4 py-2 text-white rounded mt-3">Shop Now</Link>
                         </div>
                     )}
@@ -138,12 +138,12 @@ export default function DisplayCartItem({ close }: { close: () => void }) {
 
                 {cart?.length > 0 && (
                     <div className="p-2">
-                        <Link href={"/checkout"}>
+                        <Link href={"/checkout"} onClick={close}>
                             <div className="bg-green-700 cursor-pointer text-neutral-100 px-4 font-bold text-base py-4 rounded flex items-center justify-between">
                                 <div>₹{totals.afterDiscount.toFixed(2)}</div>
 
 
-                                <button className="flex items-center gap-1 cursor-pointer" onClick={close}>
+                                <button className="flex items-center gap-1 cursor-pointer">
                                     Proceed <FaCaretRight />
                                 </button>
                             </div>

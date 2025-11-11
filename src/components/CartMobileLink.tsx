@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { FaCartShopping } from 'react-icons/fa6'
 import { FaCaretRight } from "react-icons/fa";
 import { useAppSelector } from '@/store/hooks';
+import { usePathname } from 'next/navigation';
 
 interface CartMobileLinkProps {
   onCartClick?: () => void;
@@ -11,6 +12,7 @@ const CartMobileLink: React.FC<CartMobileLinkProps> = ({ onCartClick }) => {
     const { cart } = useAppSelector((state) => state.cart);
     const [totalQty, setTotalQty] = useState(0);
     const [total, setTotal] = useState(0);
+    const pathname = usePathname();
 
     useEffect(() => {
         if (!cart || cart.length === 0) return;
@@ -34,6 +36,8 @@ const CartMobileLink: React.FC<CartMobileLinkProps> = ({ onCartClick }) => {
             onCartClick(); 
         }
     }
+    
+    if (pathname !== '/') return null;
 
     return (
         <>

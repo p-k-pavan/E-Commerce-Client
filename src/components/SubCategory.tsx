@@ -190,9 +190,9 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
 
 
         {/* Main Content - Products */}
-        <div className="flex-1">
+        <div className="flex-1 px-3 md:px-6 lg:px-16">
           {selectedSubCategory && (
-            <div className="mb-4">
+            <div className="mb-4 ">
               <h2 className="text-lg md:text-xl font-semibold text-gray-800">
                 {
                   subCategories.find(sub => sub._id === selectedSubCategory)?.name ||

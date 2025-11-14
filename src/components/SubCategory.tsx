@@ -124,7 +124,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
   };
 
   return (
-    <div className="container mx-auto px-3 py-6 bg-gray-100">
+    <div className="container mx-auto px-3 md:px-6 lg:px-12 py-6">
       <div className="flex flex-row gap-4">
         <div className="w-1/4 md:w-1/4 lg:w-1/5">
           <div className="sticky top-24 bg-white rounded-lg shadow-sm border border-gray-200 p-3 max-h-[85vh] flex flex-col">
@@ -162,8 +162,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
                   >
                     {/* Subcategory Image */}
                     <div
-                      className={`flex-shrink-0 w-12 h-16 md:w-16 md:h-24 rounded overflow-hidden 
-    ${selectedSubCategory === subCategory._id ? 'bg-green-50' : 'bg-gray-100 hover:bg-white'}`}
+                      className={`flex-shrink-0 w-12 h-16 md:w-16 md:h-24 rounded overflow-hidden `}
                     >
                       <img
                         src={subCategory.image || '/images/placeholder-subcategory.png'}
@@ -234,7 +233,7 @@ function CategoryDetailPage({ categoryId }: CategoryDetailPageProps) {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {products.map((product: Product) => (
                 <Link key={product._id} href={`/product/${product._id}`}>
                   <ProductCard

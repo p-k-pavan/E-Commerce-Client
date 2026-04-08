@@ -1,19 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // eslint: {
-  //   ignoreDuringBuilds: true,
-  // },
-    images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-        port: '',
-        pathname: '/**', // allows any path under res.cloudinary.com
-      },
-    ],
-  },
+  /* config options here */
+  reactCompiler: true,
 };
 
 export default nextConfig;

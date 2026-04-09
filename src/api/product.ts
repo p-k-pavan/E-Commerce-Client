@@ -5,3 +5,10 @@ export const getPopularProducts = async () => {
 
   return res.data.data;
 };
+
+export const getProductDetails = async (slug:string) => {
+    const res = await axiosInstance.get(`/api/product/${slug}`);
+
+  return res.data.productData;
+
+}

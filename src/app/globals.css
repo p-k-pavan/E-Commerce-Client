@@ -11,13 +11,6 @@
   --font-sans: 'Inter', 'Poppins', Arial, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: #0a0a0a;
-    --color-text: #ededed;
-    --color-subtext: #9CA3AF;
-  }
-}
 
 body {
   background: var(--color-background);
@@ -27,11 +20,6 @@ body {
 
 h1, h2, h3, h4 {
   font-weight: 700;
-}
-
-p {
-  font-size: 14px;
-  color: var(--color-subtext);
 }
 
 

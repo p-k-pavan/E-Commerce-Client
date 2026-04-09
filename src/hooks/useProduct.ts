@@ -1,5 +1,5 @@
 
-import { getPopularProducts } from "@/api/product";
+import { getPopularProducts, getProductDetails } from "@/api/product";
 import {
   keepPreviousData,
   useQuery,
@@ -14,3 +14,13 @@ export const useHomePopular = () => {
     gcTime: Infinity,
   });
 };
+
+export const useProductDetails = (slug:string) => {
+     return useQuery({
+    queryFn: getProductDetails.bind(null, slug),
+    queryKey: ["product", slug],
+    placeholderData: keepPreviousData,
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
+}

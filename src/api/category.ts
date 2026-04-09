@@ -5,3 +5,8 @@ export const getCategory = async () => {
 
   return res.data.data;
 };
+
+export const getCategoryWithSubCategories = async () => {
+  const res = await axiosInstance.get("/api/category/allSubCategories");
+  return res.data.data;
+};

@@ -1,3 +1,6 @@
+"use client";
+
+import { Categories } from "@/components/Home/categories";
 import { HeroBanner } from "@/components/Home/hero";
 import Image from "next/image";
 
@@ -7,8 +10,8 @@ export default function Home() {
     
       
       <main className="max-w-360 mx-auto px-8 py-8 space-y-12">
-        {/* Hero Banner */}
         <HeroBanner  />
+        <Categories />
         </main>
      
     </div>

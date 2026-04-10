@@ -48,7 +48,6 @@ export function CategoryCard({ image,slug }: CategoryCardProps) {
                 />
 
             </div>
-
         </div>
     );
 }

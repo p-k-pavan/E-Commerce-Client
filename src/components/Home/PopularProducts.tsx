@@ -94,6 +94,7 @@ const PopularProducts = () => {
 
                                             originalPrice={product.price}
                                             image={product.image[0]}
+                                            productId={product._id}
                                         />
                                     </div>
                                 ))}

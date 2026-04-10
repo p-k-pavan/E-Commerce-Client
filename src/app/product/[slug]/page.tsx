@@ -1,5 +1,6 @@
 'use client';
 
+import { useAddToCart, useGetCart, useUpdateCartQty } from '@/hooks/useCarat';
 import { useProductDetails } from '@/hooks/useProduct';
 import {
   ChevronLeft,
@@ -18,6 +19,15 @@ export default function ProductDetail() {
   const router = useRouter();
   const slug = useParams().slug as string;
   const { data: product, isLoading } = useProductDetails(slug);
+
+  const { mutate: addToCart } = useAddToCart();
+  const { mutate: updateQty } = useUpdateCartQty();
+  const { data: cart } = useGetCart();
+
+  const cartItem = cart?.find(
+    (item: any) =>
+      (item.productId?._id || item.productId) === product?._id
+  );
 
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -57,6 +67,35 @@ export default function ProductDetail() {
 
   const handleIncrement = () => setQuantity(prev => prev + 1);
   const handleDecrement = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart(product._id);
+  };
+
+  const handleIncrease = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (!cartItem?._id) return;
+
+    updateQty({
+      _id: cartItem._id,
+      qty: cartItem.quantity + 1,
+    });
+  };
+
+  const handleDecrease = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (!cartItem?._id) return;
+
+    const newQty = cartItem.quantity - 1;
+
+    updateQty({
+      _id: cartItem._id,
+      qty: newQty,
+    });
+  };
 
   const handleMouseMove = (e: any) => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
@@ -221,33 +260,9 @@ export default function ProductDetail() {
             </div>
 
             <div className="mt-auto p-6 border rounded-2xl border-gray-100 shadow-sm">
-              <p className="text-sm text-gray-500 mb-3 font-medium">Quantity</p>
 
               <div className="flex flex-wrap items-center gap-6">
 
-                {/* Quantity Controls */}
-                <div className="flex items-center border rounded-lg overflow-hidden border-gray-300">
-
-                  <button
-                    onClick={handleDecrement}
-                    disabled={quantity <= 1 || isOutOfStock}
-                    className="p-3 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                  >
-                    <Minus size={18} />
-                  </button>
-
-                  <div className="w-12 text-center font-bold text-lg border-x py-2">
-                    {quantity}
-                  </div>
-
-                  <button
-                    onClick={handleIncrement}
-                    disabled={quantity >= product.stock || isOutOfStock}
-                    className="p-3 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                  >
-                    <Plus size={18} />
-                  </button>
-                </div>
 
                 {/* Total Price */}
                 <div className="text-xl font-medium text-gray-600">
@@ -258,21 +273,45 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-              <button
-                disabled={isOutOfStock}
-                onClick={() => {
-                  if (isOutOfStock) return;
-
-                }}
-                className={`w-full mt-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-transform
+              {!cartItem ? (
+                <button
+                  disabled={isOutOfStock}
+                  onClick={(e) => {
+                    if (isOutOfStock) return;
+                    handleAddToCart(e);
+                  }}
+                  className={`w-full mt-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-transform
       ${isOutOfStock
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-[#16a34a] hover:bg-[#15803d] text-white active:scale-[0.98] cursor-pointer"
-                  }`}
-              >
-                <ShoppingCart size={20} />
-                {isOutOfStock ? "Out of Stock" : "Add to Cart"}
-              </button>
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-[#16a34a] hover:bg-[#15803d] text-white active:scale-[0.98] cursor-pointer"
+                    }`}
+                >
+                  <ShoppingCart size={20} />
+                  {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+                </button>
+              ) : (
+                <div className="w-full mt-6 flex items-center justify-between bg-gray-100 rounded-xl px-4 py-3">
+
+                  <button
+                    onClick={handleDecrease}
+                    className="p-2 bg-white rounded-md shadow"
+                  >
+                    <Minus size={18} />
+                  </button>
+
+                  <span className="font-bold text-lg">
+                    {cartItem.quantity}
+                  </span>
+
+                  <button
+                    onClick={handleIncrease}
+                    className="p-2 bg-white rounded-md shadow"
+                  >
+                    <Plus size={18} />
+                  </button>
+
+                </div>
+              )}
             </div>
 
           </div>

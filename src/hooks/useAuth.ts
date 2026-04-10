@@ -4,43 +4,51 @@ import { useRouter } from "next/navigation";
 import { loginUser, register } from "@/api/auth";
 import { toast } from "sonner";
 import useAuthStore from "@/store/authStore"
-import { logout as logoutApi } from "@/api/auth";;
-
+import { logout as logoutApi } from "@/api/auth";import { useSyncCart } from "./useCarat";
+;
 
 
 export const useLogin = () => {
-    const navigate = useRouter();
-    const { login } = useAuthStore();
+  const navigate = useRouter();
+  const { login } = useAuthStore();
 
-    return useMutation({
-        mutationFn: (formData: Login) => loginUser(formData),
+  const { mutateAsync: syncCartMutation } = useSyncCart(); 
 
-        onSuccess: (data) => {
-            const user = data?.user;
+  return useMutation({
+    mutationFn: (formData: Login) => loginUser(formData),
 
-            if (!user) {
-                toast.error("Invalid server response");
-                return;
-            }
+    onSuccess: async (data) => {
+      const user = data?.user;
 
-            const { name, email, mobile, avatar } = user;
+      if (!user) {
+        toast.error("Invalid server response");
+        return;
+      }
 
-            login({ name, email, mobile, avatar });
-            toast.success("Login successful!");
+      const { name, email, mobile, avatar } = user;
 
+      login({ name, email, mobile, avatar });
 
-            navigate.push("/");
-        },
+      try {
+        await syncCartMutation();
+      } catch (err) {
+        console.error("Sync failed", err);
+      }
 
-        onError: (error: any) => {
-            const message =
-                error?.response?.data?.message ||
-                error?.message ||
-                "Login failed";
+      toast.success("Login successful!");
 
-            toast.error(message);
-        },
-    });
+      navigate.push("/");
+    },
+
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Login failed";
+
+      toast.error(message);
+    },
+  });
 };
 
 export const useRegister = () => {

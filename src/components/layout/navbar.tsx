@@ -1,23 +1,33 @@
 'use client'
 
 import { useLogout } from '@/hooks/useAuth';
+import { useGetCart } from '@/hooks/useCarat';
 import useAuthStore from '@/store/authStore';
 import { Search, ShoppingCart, User, MapPin, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { CartDrawer } from '../shared/Cart';
 
 export function Navbar() {
   const navigate = useRouter();
-  const {user} = useAuthStore();
+  const { user } = useAuthStore();
   const isLoggedIn = !!user;
 
   const { mutate: logoutMutation } = useLogout();
+  const { data: cart } = useGetCart();
+console.log(cart);
+  const cartCount =
+    cart?.reduce((total: number, item: any) => total + item.quantity, 0) || 0;
 
   const handleLogout = () => {
-    logoutMutation(); 
+    logoutMutation();
   };
 
+  const [openCart, setOpenCart] = useState(false);
+
   return (
+    <>
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-360 mx-auto px-8 py-4">
         <div className="flex items-center gap-8">
@@ -28,14 +38,14 @@ export function Navbar() {
             </div>
             <span className="font-bold text-xl text-[#111827]">Namma Mart</span>
           </Link>
-          
+
           {/* Location Selector */}
           <div className="flex items-center gap-2 px-4 py-2 bg-[#F9FAFB] rounded-xl cursor-pointer hover:bg-gray-200 transition-colors">
             <MapPin className="text-[#16A34A]" size={20} />
             <span className="font-medium text-[#111827] text-sm">Bangalore</span>
             <ChevronDown className="text-[#6B7280]" size={18} />
           </div>
-          
+
           {/* Search Bar */}
           <div className="flex-1 relative">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#6B7280]" size={20} />
@@ -45,16 +55,19 @@ export function Navbar() {
               className="w-full pl-12 pr-4 py-3 bg-[#F9FAFB] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#16A34A] focus:border-transparent text-[#111827]"
             />
           </div>
-          
+
           {/* Right Actions */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6" onClick={() => setOpenCart(true)}>
+            
             <div className="relative cursor-pointer hover:scale-110 transition-transform">
               <ShoppingCart className="text-[#111827]" size={24} />
-              <div className="absolute -top-2 -right-2 bg-[#16A34A] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </div>
+              {cartCount > 0 && (
+                <div className="absolute -top-2 -right-2 bg-[#16A34A] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartCount}
+                </div>
+              )}
             </div>
-            
+
             {isLoggedIn ? (
               <div className="relative group">
                 <div className="cursor-pointer hover:scale-110 transition-transform">
@@ -94,5 +107,7 @@ export function Navbar() {
         </div>
       </div>
     </nav>
+    <CartDrawer isOpen={openCart} onClose={() => setOpenCart(false)} />
+    </>
   );
 }

@@ -1,0 +1,181 @@
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+import {
+  getCartItems,
+  addToCart,
+  updateCartQty,
+  deleteCartItem,
+
+  getGuestCart,
+  addToGuestCart,
+  updateGuestCartQty,
+  deleteGuestCartItem,
+
+  syncCart,
+} from "@/api/cart";
+import useAuthStore from "./authStore";
+
+
+type CartItem = {
+  _id: string;
+  productId: any;
+  quantity: number;
+};
+
+type CartState = {
+  cart: CartItem[];
+  loading: boolean;
+
+  // Fetch cart
+  fetchCart: () => Promise<void>;
+
+  // Add item
+  addItem: (productId: string) => Promise<void>;
+
+  // Update quantity
+  updateQty: (_id: string, qty: number) => Promise<void>;
+
+  // Delete item
+  deleteItem: (_id: string) => Promise<void>;
+
+  // Sync guest → user
+  syncCartToUser: () => Promise<void>;
+
+  // Clear cart
+  clearCart: () => void;
+};
+
+const useCartStore = create<CartState>()(
+  persist(
+    (set, get) => ({
+      cart: [],
+      loading: false,
+
+      fetchCart: async () => {
+        set({ loading: true });
+
+        const user = useAuthStore.getState().user;
+
+        try {
+          if (user) {
+            const res = await getCartItems();
+            set({ cart: res.cart });
+          } else {
+            const guestId = localStorage.getItem("guestId");
+            if (!guestId) return;
+
+            const res = await getGuestCart(guestId);
+            set({ cart: res.cart });
+          }
+        } catch (error) {
+          console.error("Fetch cart error", error);
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+  
+      addItem: async (productId) => {
+        const user = useAuthStore.getState().user;
+
+        try {
+          if (user) {
+            await addToCart(productId);
+          } else {
+            let guestId = localStorage.getItem("guestId");
+
+            if (!guestId) {
+              guestId = crypto.randomUUID();
+              localStorage.setItem("guestId", guestId);
+            }
+
+            await addToGuestCart(productId, guestId);
+          }
+
+          await get().fetchCart();
+        } catch (error) {
+          console.error("Add item error", error);
+        }
+      },
+
+
+      updateQty: async (_id, qty) => {
+        const user = useAuthStore.getState().user;
+
+        try {
+          if (user) {
+            await updateCartQty(_id, qty);
+          } else {
+            const guestId = localStorage.getItem("guestId");
+            if (!guestId) return;
+
+            await updateGuestCartQty(_id, guestId, qty);
+          }
+
+          await get().fetchCart();
+        } catch (error) {
+          console.error("Update qty error", error);
+        }
+      },
+
+
+      deleteItem: async (_id) => {
+        const user = useAuthStore.getState().user;
+
+        try {
+          if (user) {
+            await deleteCartItem(_id);
+          } else {
+            const guestId = localStorage.getItem("guestId");
+            if (!guestId) return;
+
+            await deleteGuestCartItem(_id, guestId);
+          }
+
+          await get().fetchCart();
+        } catch (error) {
+          console.error("Delete item error", error);
+        }
+      },
+
+
+      syncCartToUser: async () => {
+        const user = useAuthStore.getState().user;
+        if (!user) return;
+
+        try {
+          const guestId = localStorage.getItem("guestId");
+          if (!guestId) return;
+
+          const res = await getGuestCart(guestId);
+
+          if (res.cart.length > 0) {
+            const items = res.cart.map((item: CartItem) => ({
+              productId: item.productId._id,
+              quantity: item.quantity,
+            }));
+
+            await syncCart(items);
+
+            localStorage.removeItem("guestId");
+          }
+
+          await get().fetchCart();
+        } catch (error) {
+          console.error("Sync error", error);
+        }
+      },
+
+
+      clearCart: () => {
+        set({ cart: [] });
+      },
+    }),
+    {
+      name: "cart-store",
+    }
+  )
+);
+
+export default useCartStore;

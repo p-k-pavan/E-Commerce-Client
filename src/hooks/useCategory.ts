@@ -1,5 +1,5 @@
 
-import { getCategory, getCategoryWithSubCategories } from "@/api/category";
+import { getCategory, getCategoryWithSubCategories, getSubCategory } from "@/api/category";
 import {
   keepPreviousData,
   useQuery,
@@ -24,3 +24,13 @@ export const useCategoryWithSubCategories = () => {
     gcTime: Infinity,
   });
 };
+
+export const useSubCategorybyCategory = (categorySlug:string) => {
+     return useQuery({
+    queryFn: getSubCategory.bind(null, categorySlug),
+    queryKey: ["subCategories", categorySlug],
+    placeholderData: keepPreviousData,
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
+}

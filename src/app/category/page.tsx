@@ -32,7 +32,13 @@ export default function Home() {
                             className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col"
                         >
 
-                            <div className="p-5 border-b border-gray-50 bg-linear-to-r from-white to-gray-50 cursor-pointer" onClick={() => navigate.push(`/category/${category.slug}`)}>
+                            <div className="p-5 border-b border-gray-50 bg-linear-to-r from-white to-gray-50 cursor-pointer"
+                                onClick={() => {
+                                    const firstSub = category.subCategories?.[0]?.slug;
+                                    if (firstSub) {
+                                        navigate.push(`/category/${category.slug}/${firstSub}`);
+                                    }
+                                }}>
                                 <h2 className="text-lg font-bold text-gray-800 flex items-center justify-between">
                                     {category.name}
                                     <ChevronRight size={18} className="text-gray-400" />
@@ -53,14 +59,19 @@ export default function Home() {
                                     ))}
 
                                     {category.subCategories.length > 6 && (
-                                        <li className="pt-2">
-                                            <Link
-                                                href={`/category/${category.slug}`}
-                                                className="text-xs font-bold text-green-600 uppercase tracking-wider hover:underline"
-                                            >
-                                                + {category.subCategories.length - 6} More Items
-                                            </Link>
-                                        </li>
+
+                                        <button
+                                            onClick={() => {
+                                                const firstSub = category.subCategories?.[0]?.slug;
+                                                if (firstSub) {
+                                                    navigate.push(`/category/${category.slug}/${firstSub}`);
+                                                }
+                                            }}
+                                            className="text-xs font-bold text-green-600 uppercase tracking-wider hover:underline"
+                                        >
+                                            + {category.subCategories.length - 6} More Items
+                                        </button>
+
                                     )}
                                 </ul>
                             </div>

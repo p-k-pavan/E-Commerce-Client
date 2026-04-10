@@ -12,3 +12,8 @@ export const getProductDetails = async (slug:string) => {
   return res.data.productData;
 
 }
+
+export const getProductsByCategoryandSubCategory = async (categorySlug:string, subCategorySlug:string) => {
+    const res = await axiosInstance.get(`/api/product/category/${categorySlug}/${subCategorySlug}`);
+    return res.data.data;
+}

@@ -25,9 +25,9 @@ export const useLogin = () => {
         return;
       }
 
-      const { name, email, mobile, avatar } = user;
+      const { name, email, mobile, avatar ,address} = user;
 
-      login({ name, email, mobile, avatar });
+      login({ name, email, mobile, avatar,address});
 
       try {
         await syncCartMutation();

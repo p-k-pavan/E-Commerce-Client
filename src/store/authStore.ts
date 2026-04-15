@@ -2,10 +2,22 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+type Address = {
+
+  mobile: string;
+  postalCode: string;
+  city: string;
+  state: string;
+  street: string;
+  country: string;
+  isDefault: boolean;
+};
+
 type User = {
   name: string;
   email: string;
   mobile?: string;
+  address?: Address | null;
   avatar?: string;
 };
 
@@ -20,7 +32,6 @@ const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-      token: null,
 
       login: (user) =>
         set({

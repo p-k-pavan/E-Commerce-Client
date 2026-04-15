@@ -57,9 +57,9 @@ export function Navbar() {
             </div>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-6" onClick={() => setOpenCart(true)}>
+            <div className="flex items-center gap-6" >
 
-              <div className="relative cursor-pointer hover:scale-110 transition-transform">
+              <div className="relative cursor-pointer hover:scale-110 transition-transform" onClick={() => setOpenCart(true)}>
                 <ShoppingCart className="text-[#111827]" size={24} />
                 {cartCount > 0 && (
                   <div className="absolute -top-2 -right-2 bg-[#16A34A] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">

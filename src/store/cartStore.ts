@@ -52,6 +52,9 @@ const useCartStore = create<CartState>()(
       cart: [],
       loading: false,
 
+      // =========================
+      // FETCH
+      // =========================
       fetchCart: async () => {
         set({ loading: true });
 
@@ -75,9 +78,40 @@ const useCartStore = create<CartState>()(
         }
       },
 
-  
+      // =========================
+      // ADD ITEM (⚡ OPTIMISTIC)
+      // =========================
       addItem: async (productId) => {
         const user = useAuthStore.getState().user;
+
+        // 🔥 instant UI update
+        set((state) => {
+          const existing = state.cart.find(
+            (item) =>
+              (item.productId?._id || item.productId) === productId
+          );
+
+          if (existing) {
+            return {
+              cart: state.cart.map((item) =>
+                item._id === existing._id
+                  ? { ...item, quantity: item.quantity + 1 }
+                  : item
+              ),
+            };
+          }
+
+          return {
+            cart: [
+              ...state.cart,
+              {
+                _id: "temp-" + Date.now(),
+                productId: { _id: productId },
+                quantity: 1,
+              },
+            ],
+          };
+        });
 
         try {
           if (user) {
@@ -93,15 +127,27 @@ const useCartStore = create<CartState>()(
             await addToGuestCart(productId, guestId);
           }
 
-          await get().fetchCart();
+          // 🔥 optional sync (not blocking UI)
+          get().fetchCart();
         } catch (error) {
           console.error("Add item error", error);
         }
       },
 
-
+      // =========================
+      // UPDATE QTY (⚡ INSTANT)
+      // =========================
       updateQty: async (_id, qty) => {
         const user = useAuthStore.getState().user;
+
+        // 🔥 instant UI
+        set((state) => ({
+          cart: state.cart
+            .map((item) =>
+              item._id === _id ? { ...item, quantity: qty } : item
+            )
+            .filter((item) => item.quantity > 0),
+        }));
 
         try {
           if (user) {
@@ -113,15 +159,22 @@ const useCartStore = create<CartState>()(
             await updateGuestCartQty(_id, guestId, qty);
           }
 
-          await get().fetchCart();
+          get().fetchCart();
         } catch (error) {
           console.error("Update qty error", error);
         }
       },
 
-
+      // =========================
+      // DELETE (⚡ INSTANT)
+      // =========================
       deleteItem: async (_id) => {
         const user = useAuthStore.getState().user;
+
+        // 🔥 instant UI
+        set((state) => ({
+          cart: state.cart.filter((item) => item._id !== _id),
+        }));
 
         try {
           if (user) {
@@ -133,13 +186,15 @@ const useCartStore = create<CartState>()(
             await deleteGuestCartItem(_id, guestId);
           }
 
-          await get().fetchCart();
+          get().fetchCart();
         } catch (error) {
           console.error("Delete item error", error);
         }
       },
 
-
+      // =========================
+      // SYNC
+      // =========================
       syncCartToUser: async () => {
         const user = useAuthStore.getState().user;
         if (!user) return;
@@ -157,16 +212,14 @@ const useCartStore = create<CartState>()(
             }));
 
             await syncCart(items);
-
             localStorage.removeItem("guestId");
           }
 
-          await get().fetchCart();
+          get().fetchCart();
         } catch (error) {
           console.error("Sync error", error);
         }
       },
-
 
       clearCart: () => {
         set({ cart: [] });

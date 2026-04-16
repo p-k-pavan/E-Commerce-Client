@@ -6,11 +6,14 @@ import { useLogout } from '@/hooks/useAuth';
 import useAuthStore from '@/store/authStore';
 import { useUpdateUser } from '@/hooks/useUser';
 import AddressSection from '@/components/profile/Address';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
   const { user } = useAuthStore();
+  const router = useRouter();
 
   const { mutate: logoutMutation } = useLogout();
 
@@ -35,6 +38,9 @@ export default function Profile() {
         phone: user?.mobile || '',
         address: user?.address ? `${user.address.street}, ${user.address.city}, ${user.address.state} - ${user.address.postalCode}, ${user.address.country}` : '',
       });
+    }else{
+      toast.error("Please login first");
+      router.push("/login");
     }
   }, [user]);
 

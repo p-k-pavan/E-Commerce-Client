@@ -34,6 +34,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head><script src="https://checkout.razorpay.com/v1/checkout.js" async></script></head>
       
       <body className="min-h-full flex flex-col">
         <QueryProvider>

@@ -1,5 +1,4 @@
-import { X } from "lucide-react";
-import { FaFacebook, FaInstagram, FaYoutube} from "react-icons/fa";
+import { FaInstagram, FaYoutube} from "react-icons/fa";
 import { FaFacebookF, FaXTwitter } from "react-icons/fa6";
 
 export function Footer() {
@@ -46,10 +45,10 @@ export function Footer() {
           <div>
             <h3 className="font-semibold text-lg mb-4">Legal</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Terms & Conditions</a></li>
-              <li><a href="#" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Privacy Policy</a></li>
-              <li><a href="#" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Cookie Policy</a></li>
-              <li><a href="#" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Refund Policy</a></li>
+              <li><a href="/terms" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Terms & Conditions</a></li>
+              <li><a href="/privacy" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Privacy Policy</a></li>
+              <li><a href="/cookies" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Cookie Policy</a></li>
+              <li><a href="/refund" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Refund Policy</a></li>
             </ul>
           </div>
         </div>

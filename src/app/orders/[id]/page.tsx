@@ -64,7 +64,6 @@ export default function OrderDetailsPage() {
     <div className="min-h-screen bg-[#F9FAFB] pb-12">
       <main className="max-w-360 mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        {/* Navigation & Header */}
         <button 
           onClick={() => router.back()}
           className="flex items-center gap-2 text-[#6B7280] hover:text-[#111827] transition-colors mb-6 group"
@@ -75,7 +74,7 @@ export default function OrderDetailsPage() {
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-[#111827]">Order #{order.orderId}</h1>
+            <h1 className="text-2xl font-bold text-[#111827]">Order #{order.orderId}</h1>
             <div className="flex items-center gap-4 mt-2">
               <span className="flex items-center gap-1.5 text-sm text-[#6B7280]">
                 <Calendar className="w-4 h-4" />
@@ -103,7 +102,7 @@ export default function OrderDetailsPage() {
               <div className="divide-y divide-gray-100">
                 {order.items.map((item: any) => (
                   <div key={item.productId} className="p-6 flex gap-6 items-center">
-                    <div className="relative w-24 h-24 shrink-0">
+                    <div className="relative w-24 h-24 shrink-0" onClick={ () => router.push(`/product/${item.slug}`)}>
                       <Image
                         src={item.image}
                         alt={item.name}

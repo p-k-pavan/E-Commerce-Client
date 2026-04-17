@@ -5,7 +5,7 @@ export function Footer() {
   return (
     <footer className="bg-[#111827] text-white py-12">
       <div className="max-w-360 mx-auto px-8">
-        <div className="grid grid-cols-4 gap-12 mb-8">
+        <div className="grid grid-cols-2 gap-12 mb-8">
 
           <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -19,23 +19,14 @@ export function Footer() {
             </p>
           </div>
           
-
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              <li><a href="#" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">About Us</a></li>
-              <li><a href="#" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Careers</a></li>
-              <li><a href="#" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Blog</a></li>
-              <li><a href="#" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Press</a></li>
-            </ul>
-          </div>
           
 
-          <div>
+          <div className="grid grid-cols-2 gap-8">
+            <div>
             <h3 className="font-semibold text-lg mb-4">Help</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Contact Us</a></li>
-              <li><a href="#" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">FAQs</a></li>
+              <li><a href="/contact" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Contact Us</a></li>
+              <li><a href="/faqs" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">FAQs</a></li>
               <li><a href="#" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Shipping & Returns</a></li>
               <li><a href="#" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Track Order</a></li>
             </ul>
@@ -50,6 +41,7 @@ export function Footer() {
               <li><a href="/cookies" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Cookie Policy</a></li>
               <li><a href="/refund" className="text-[#9CA3AF] hover:text-white transition-colors text-sm">Refund Policy</a></li>
             </ul>
+          </div>
           </div>
         </div>
         

@@ -11,11 +11,11 @@ export default function LegalWrapper({
   children: React.ReactNode 
 }) {
   return (
-    <div className="min-h-screen bg-[var(--color-background)] py-12 px-4 sm:px-6">
+    <div className="min-h-screen bg-(--color-background) py-12 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
         <Link 
           href="/" 
-          className="inline-flex items-center gap-2 text-[var(--color-subtext)] hover:text-[var(--color-primary)] mb-8 group transition-colors font-medium"
+          className="inline-flex items-center gap-2 text-(--color-subtext) hover:text-(--color-primary) mb-8 group transition-colors font-medium"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           Back to Namma Mart

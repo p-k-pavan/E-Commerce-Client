@@ -36,7 +36,7 @@ export function CategoryCard({ image,slug }: CategoryCardProps) {
     };
     return (
         <div className=" rounded-2xl p-3 flex flex-col items-center gap-3 cursor-pointer " onClick={handleRedirect}>
-            <div className="w-48 h-48  rounded-2xl flex items-center justify-center overflow-hidden relative" >
+            <div className="w-32 h-32 md:w-48 md:h-48  rounded-2xl flex items-center justify-center overflow-hidden relative" >
 
                 <Image
                     src={image}

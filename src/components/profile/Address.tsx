@@ -14,7 +14,6 @@ export default function AddressSection() {
   const { data: addresses = [], isLoading } = useGetAddresses();
   const { mutate: deleteAddress } = useDeleteAddress();
 
-  // 🔥 modal state
   const [openModal, setOpenModal] = useState(false);
   const [editData, setEditData] = useState<any>(null);
 
@@ -26,7 +25,6 @@ export default function AddressSection() {
     <>
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
         
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-[#111827]">
             Saved Addresses
@@ -35,7 +33,7 @@ export default function AddressSection() {
           <button
             className="px-4 py-2 bg-[#16A34A] text-white rounded-xl hover:bg-[#15803D]"
             onClick={() => {
-              setEditData(null); // 🔥 add mode
+              setEditData(null);
               setOpenModal(true);
             }}
           >
@@ -85,7 +83,7 @@ export default function AddressSection() {
                     {/* EDIT */}
                     <button
                       onClick={() => {
-                        setEditData(addr); // 🔥 edit mode
+                        setEditData(addr);
                         setOpenModal(true);
                       }}
                       className="p-2 text-[#16A34A] hover:bg-green-50 rounded-lg"
@@ -93,7 +91,6 @@ export default function AddressSection() {
                       <Edit2 className="w-5 h-5" />
                     </button>
 
-                    {/* DELETE */}
                     <button
                       onClick={() => deleteAddress(addr._id)}
                       className="p-2 text-red-500 hover:bg-red-50 rounded-lg"

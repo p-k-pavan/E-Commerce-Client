@@ -5,6 +5,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import QueryProvider from "@/providers/QueryProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,16 +36,18 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head><script src="https://checkout.razorpay.com/v1/checkout.js" async></script></head>
-      
+
       <body className="min-h-full flex flex-col">
         <QueryProvider>
-          <Navbar />
+          <Suspense fallback={<div className="h-20 bg-white" />}>
+            <Navbar />
+          </Suspense>
           {children}
           <Toaster position="top-center" />
-           <Footer />
+          <Footer />
         </QueryProvider>
-        </body>
-     
+      </body>
+
     </html>
   );
 }

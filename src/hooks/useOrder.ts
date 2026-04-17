@@ -6,6 +6,7 @@ import {
   createOnlinePayment,
   verifyPayment,
   getOrders,
+  getOrderById,
 } from "@/api/order";
 
 export const useGetOrders = () => {
@@ -62,5 +63,16 @@ export const useVerifyPayment = () => {
     onError: () => {
       toast.error("Payment verification failed");
     },
+  });
+};
+
+export const useGetOrderById = (id: string) => {
+  return useQuery({
+    queryKey: ["order", id],
+    queryFn: async () => {
+      const res = await getOrderById(id);
+      return res.data;
+    },
+    enabled: !!id,
   });
 };

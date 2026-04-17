@@ -27,7 +27,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
   return (
     <>
-      {/* Overlay */}
+      
       {isOpen && (
         <div
           onClick={onClose}
@@ -35,13 +35,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         />
       )}
 
-      {/* Drawer */}
+      
       <div
         className={`fixed top-0 right-0 h-full w-[50%] bg-white z-50 shadow-xl transform transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Header */}
+        
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-xl font-bold">My Cart</h2>
           <button onClick={onClose}>
@@ -125,14 +125,20 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
           {user ? (
             <button
-              onClick={() => router.push("/checkout")}
+              onClick={() => {
+                router.push("/checkout");
+                onClose();
+              }}
               className="w-full bg-[#16A34A] text-white py-3 rounded-xl"
             >
               Proceed to Checkout
             </button>
           ) : (
             <button
-              onClick={() => router.push("/login")}
+              onClick={() => {
+                router.push("/login");
+                onClose();
+              }}
               className="w-full bg-[#16A34A] text-white py-3 rounded-xl"
             >
               Login to Checkout

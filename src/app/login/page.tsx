@@ -5,9 +5,12 @@ import { Mail, Lock, Eye, EyeOff, ShoppingBag } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLogin } from '@/hooks/useAuth';
+import useAuthStore from '@/store/authStore';
 
 export default function Login() {
   const navigate = useRouter();
+  const {user} = useAuthStore();
+  if(user) navigate.back();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -27,6 +30,8 @@ export default function Login() {
       [e.target.name]: e.target.value,
     });
   };
+
+
 
   return (
     <div className="min-h-screen bg-[#F9FAFB] flex">

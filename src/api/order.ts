@@ -35,3 +35,8 @@ export const getOrders = async () => {
   const res = await axiosInstance.get("/api/order");
   return res.data;
 };
+
+export const getOrderById = async (id: string) => {
+  const res = await axiosInstance.get(`/api/order/${id}`);
+  return res.data;
+};
